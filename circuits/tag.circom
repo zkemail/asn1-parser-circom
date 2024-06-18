@@ -2,6 +2,7 @@ pragma circom 2.0.0;
 
 template TagDecoder() {
     signal input n;
+    assert(n >= 0x01);
     signal output tagClass;
     signal output tagConstructed;
     signal output tagNumber;
