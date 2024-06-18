@@ -9,3 +9,8 @@ export function parseCertificate(input: string) {
   const encoded = encoded1 || encoded2 || encoded3;
   return encoded.trim();
 }
+
+export function convertUintArray(str: string): Uint8Array {
+  // TODO : convert given string into Uint8Array
+  return new Uint8Array([]);
+}
