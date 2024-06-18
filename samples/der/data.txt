@@ -1,0 +1,1 @@
+this is data from data.txt file created by vikas
