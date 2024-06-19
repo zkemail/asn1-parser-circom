@@ -2,11 +2,12 @@ pragma circom 2.0.0;
 
 template TagDecoder() {
     signal input n;
-    assert(n >= 0x01);
+  
     signal output tagClass;
     signal output tagConstructed;
     signal output tagNumber;
-
+    
+    assert(n < 128);
 
     // Extract tag class from 7th and 8th bits
     tagClass <-- n >> 6;
@@ -18,6 +19,4 @@ template TagDecoder() {
 
     // Extract tag number from lower 5 bits
     tagNumber <-- n & 0x1f;
-
-    
 }

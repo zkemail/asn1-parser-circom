@@ -16,8 +16,8 @@ describe("Tag Decoder Tests", () => {
     await circuit.expectConstraintCount(0);
   });
 
-  it("It Should check n is non zero", async () => {
-    await circuit.expectFail({ n: 0x00 });
+  it("It Should check n is 8-bit number", async () => {
+    await circuit.expectFail({ n: 129 });
   });
 
   it("It should decode SEQUENCE CONSTRUCTED correctly", async () => {
@@ -50,8 +50,8 @@ describe("Tag Decoder Tests", () => {
     await circuit.expectPass({ n: N }, { tagClass, tagConstructed, tagNumber });
   });
 
-  it("It should decode CONTEXT-SPECIFIC CONSTRUCTED correctly", async () => {
-    const N = 0xa3;
+  it("It should decode VISIBLESTRING correctly", async () => {
+    const N = 0x1a;
     const { tagClass, tagConstructed, tagNumber } = tagDecoder(N);
     await circuit.expectPass({ n: N }, { tagClass, tagConstructed, tagNumber });
   });
