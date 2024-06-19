@@ -70,6 +70,22 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-20.3.0.tgz#719498898d5defab83c3560f45d8498f58d11938"
   integrity sha512-cumHmIAf6On83X7yP+LrsEyUOf/YlociZelmpRYaGFydoaPdxdt80MAbu6vWerQT2COCp2nPvHdsbD7tHn/YlQ==
 
+"@zk-email/circuits@^6.1.2":
+  version "6.1.2"
+  resolved "https://registry.yarnpkg.com/@zk-email/circuits/-/circuits-6.1.2.tgz#bde32294e11723bf5880219c274fb720c95aeb3f"
+  integrity sha512-pmZsGo2Kz/CC5T4/VUA/ngJpzP2g05WvXj4X4j4/y30mjdz9oocGYLqsMZEl2Fx3rmH4mZXkGhm0sA0C7hAReg==
+  dependencies:
+    "@zk-email/zk-regex-circom" "^2.1.0"
+    circomlib "^2.0.5"
+
+"@zk-email/zk-regex-circom@^2.1.0":
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/@zk-email/zk-regex-circom/-/zk-regex-circom-2.1.0.tgz#cc2f1d93fb130a9f8ac88114d3559a296df97538"
+  integrity sha512-Ayq0Hk4m7w1UHPPx2c5bUWLdKUPnuK62AZFOyiIvA7x4NgRyvjxe+S4D5KFH5FIz4PgEnXVxgscSSbe5p/GCvQ==
+  dependencies:
+    commander "^11.0.0"
+    snarkjs "^0.7.0"
+
 acorn-walk@^8.1.1:
   version "8.2.0"
   resolved "https://registry.yarnpkg.com/acorn-walk/-/acorn-walk-8.2.0.tgz#741210f2e2426454508853a2f44d0ab83b7f69c1"
@@ -322,6 +338,11 @@ color-name@~1.1.4:
   version "1.1.4"
   resolved "https://registry.yarnpkg.com/color-name/-/color-name-1.1.4.tgz#c2a09a87acbde69543de6f63fa3995c826c536a2"
   integrity sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==
+
+commander@^11.0.0:
+  version "11.1.0"
+  resolved "https://registry.yarnpkg.com/commander/-/commander-11.1.0.tgz#62fdce76006a68e5c1ab3314dc92e800eb83d906"
+  integrity sha512-yPVavfyCcRhmorC7rWlkHn15b4wDVgVmBA7kV4QVBsF7kv/9TKJAbAXVTxvTnwP8HHKjRCJDClKbciiYS7p0DQ==
 
 concat-map@0.0.1:
   version "0.0.1"

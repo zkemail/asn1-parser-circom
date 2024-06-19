@@ -2,5 +2,10 @@
   "tag": {
     "file": "tag",
     "template": "TagClassifer"
+  },
+  "parser": {
+    "file": "parser",
+    "template": "AsnParser",
+    "params": 3
   }
 }

@@ -5,6 +5,7 @@
     "test": "npx mocha"
   },
   "dependencies": {
+    "@zk-email/circuits": "^6.1.2",
     "circomkit": "^0.0.22",
     "circomlib": "^2.0.5"
   },
