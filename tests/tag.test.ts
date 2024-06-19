@@ -2,7 +2,7 @@ import { WitnessTester } from "circomkit";
 import { circomkit } from "./common";
 import { tagDecoder } from "../src/tag";
 
-describe("Tag Decoder Tests", () => {
+describe("TagDecoder", () => {
   let circuit: WitnessTester<["n"], ["tagClass", "tagConstructed", "tagNumber"]>;
 
   before(async () => {
@@ -55,4 +55,19 @@ describe("Tag Decoder Tests", () => {
     const { tagClass, tagConstructed, tagNumber } = tagDecoder(N);
     await circuit.expectPass({ n: N }, { tagClass, tagConstructed, tagNumber });
   });
+});
+
+describe("TagLength", () => {
+  let circuit: WitnessTester<["in"], ["out"]>;
+
+  before(async () => {
+    let N = 1;
+    circuit = await circomkit.WitnessTester(`tagLength_${N}`, {
+      file: "tag",
+      template: "TagLength",
+      params: [N],
+    });
+  });
+
+  it("It Should take inputs", async () => {});
 });
