@@ -1,3 +1,3 @@
-import { readAndParseDer } from "./cert-utils";
+import { readAndParseDer } from "./cert";
 
 export const SAMPLE_DER: number[] = Array.from(readAndParseDer());

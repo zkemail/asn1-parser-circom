@@ -22,21 +22,3 @@ template TagDecoder() {
     // Extract tag number from lower 5 bits
     tagNumber <-- n & 0x1f;
 }
-
-
-template TagLength(N) { 
-    // TODO 
-    assert(N > 0);
-    signal input in[N];
-    signal output out;
-
-    // Check whether most significant bit is set to zero
-    // If it's set to 1 then it's encoded in long bytes format
-    // var mst = in[0] & 0x80;
-
-    // if (mst == 0) {
-    //     out <== in[0];
-    // }else{
-
-    // }
-}

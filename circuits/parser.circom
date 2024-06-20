@@ -48,34 +48,35 @@ template AsnParser(N) {
 }
  
 
-template DecodeLength(N) { 
+template DecodeLength(N) {
     signal input in[N];
     signal output out;
 
-    // ASN.1 BER TAG-LENGTH-VALUE
-    assert(N >= 3);
+    assert(N >= 2);
     signal secondByte <== in[1];
 
     // Check whether most significant bit is set to zero
-    // If it's mst set to 1 then it's encoded in long bytes format
-    var mst = secondByte & 0x80 == 0 ? 1 : 0;
+    // If it's set to 0 then it's short form encoding
+    var isShortForm = (secondByte & 0x80) == 0 ? 1 : 0;
     var length = 0;
-    if (mst == 1) {
-       length = secondByte;
+
+    if (isShortForm == 1) {
+        length = secondByte;
+   
     }else {
         // Long bytes encoding
-        // Get 7 bits of octet 
+        // Get 7 bits of octet
         // 0x7F => 01111111
-        var numBytes  = secondByte & 0x7f;
+        var numBytes = secondByte & 0x7f;
         var temp = 0;
-        for (var i = 0; i < numBytes ;i++) { 
-               temp = (temp << 8) | in[i + 2];
-        }        
-
-       length = temp;
+        for (var i = 0; i < numBytes; i++) {
+            temp = (temp << 8) | in[i + 2];
+        }
+        length = temp;
     }
+
     out <-- length;
-    log(out , "Decodelength");
+    log(out, "DecodeLength");
 }
 
 template ObjectIdentiferParser(N) { 

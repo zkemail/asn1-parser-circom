@@ -1,4 +1,5 @@
 import fs from "fs";
+
 export class Certificate {
   static parseCertificate(input: string) {
     const Base64CertRegex =
