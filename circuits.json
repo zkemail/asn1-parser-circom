@@ -7,5 +7,9 @@
     "file": "parser",
     "template": "AsnParser",
     "params": 3
+  },
+  "tag_class": {
+    "file": "tag_class",
+    "template": "BooleanContraint"
   }
 }

@@ -22,3 +22,4 @@ template TagDecoder() {
     // Extract tag number from lower 5 bits
     tagNumber <-- n & 0x1f;
 }
+
