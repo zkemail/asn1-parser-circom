@@ -56,18 +56,3 @@ describe("TagDecoder", () => {
     await circuit.expectPass({ n: N }, { tagClass, tagConstructed, tagNumber });
   });
 });
-
-describe("TagLength", () => {
-  let circuit: WitnessTester<["in"], ["out"]>;
-
-  before(async () => {
-    let N = 1;
-    circuit = await circomkit.WitnessTester(`tagLength_${N}`, {
-      file: "tag",
-      template: "TagLength",
-      params: [N],
-    });
-  });
-
-  it("It Should take inputs", async () => {});
-});
