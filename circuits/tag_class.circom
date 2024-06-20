@@ -36,3 +36,8 @@ template BITStringConstraint() {
     signal input in;
     in === tag_class_bit_string();
 }
+
+template IntegerConstraint() {
+    signal input in;
+    in === tag_class_integer();
+}

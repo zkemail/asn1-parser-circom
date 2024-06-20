@@ -11,6 +11,14 @@ describe("TagClass", async () => {
     await circuit.expectConstraintPass(witness);
   });
 
+  it("should satisfy IntegerConstraint", async () => {
+    const circuit = await circomkit.WitnessTester("TagClass", {
+      file: "tag_class",
+      template: "IntegerConstraint",
+    });
+    await circuit.expectPass({ in: 0x02 });
+  });
+
   it("should satisfy OctectStringConstraint", async () => {
     const circuit = await circomkit.WitnessTester("TagClass", {
       file: "tag_class",

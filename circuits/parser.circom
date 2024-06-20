@@ -83,3 +83,5 @@ template ObjectIdentiferParser(N) {
     signal input in[N];
     signal output out;
 }
+
+template 
