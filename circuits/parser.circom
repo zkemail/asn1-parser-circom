@@ -2,6 +2,7 @@ pragma circom 2.0.0;
 
 include "@zk-email/circuits/utils/array.circom";
 include "./utils.circom";
+include "./tag_class.circom";
 
 template AsnParser(N) {
     signal input in[N];
@@ -32,7 +33,7 @@ template AsnParser(N) {
     component log1 = PrintArray(startIndex);
     log1.in <== Sequence;
 
-    log("------------------");
+    // log("------------------");
     component log2 = PrintArray(subArrayLength);
     log2.in <== ObjectIdentifer;
 
@@ -76,7 +77,7 @@ template DecodeLength(N) {
     }
 
     out <-- length;
-    log(out, "DecodeLength");
+    // log(out, "DecodeLength");
 }
 
 template ObjectIdentiferParser(N) { 
@@ -84,4 +85,28 @@ template ObjectIdentiferParser(N) {
     signal output out;
 }
 
-template 
+template UTF8StringParser(N) {
+    signal input in[N];
+    signal output out[N-2]; 
+
+    component utf8StringConstraint = UTF8StringConstraint();
+    utf8StringConstraint.in <== in[0];
+
+    component decodeLength = DecodeLength(N);
+    decodeLength.in <== in;
+
+    signal length <== decodeLength.out;
+
+    component subArray = SelectSubArray(N, N-2);
+    subArray.in <== in;
+    subArray.startIndex <== 2;  
+    subArray.length <== length;
+
+    for (var i = 0; i < N-2; i++) {
+        out[i] <== subArray.out[i];
+    }
+
+
+    // component logl = PrintArray(N-2);
+    // logl.in <== out;
+}
