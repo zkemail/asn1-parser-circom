@@ -4,6 +4,7 @@ import { circomkit } from "../tests/common";
 export enum CircuitName {
   AsnParser,
   DecodeLength,
+  ObjectIdentifierLength,
 }
 
 export const CompileCircuit = async (
@@ -32,6 +33,13 @@ export const CompileCircuit = async (
         });
         break;
 
+      case CircuitName.ObjectIdentifierLength:
+        circuit = await circomkit.WitnessTester(`ObjectIdentifierLength_${paramsNumber}`, {
+          file: "parser",
+          template: "ObjectIdentifierLength",
+          params: [paramsNumber],
+        });
+        break;
       default:
         throw new Error("Unknown Circuit");
     }

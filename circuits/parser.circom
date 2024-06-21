@@ -80,10 +80,6 @@ template DecodeLength(N) {
     // log(out, "DecodeLength");
 }
 
-template ObjectIdentiferParser(N) { 
-    signal input in[N];
-    signal output out;
-}
 
 template UTF8StringParser(N) {
     signal input in[N];
@@ -109,4 +105,30 @@ template UTF8StringParser(N) {
 
     // component logl = PrintArray(N-2);
     // logl.in <== out;
+}
+
+template ObjectIdentifierLength(N) { 
+    signal input in[N];
+    signal output out;
+
+    var length  = 0;
+    var isFirst = 1;
+    for(var i=0; i<N; i++) { 
+        var curr = in[i];
+        curr = curr & 0x80 == 0 ? 1 : 0;
+        if (curr == 1) { 
+            if(isFirst == 1) { 
+                length +=2;
+                isFirst = 0;
+            }else{
+                length++;
+            }
+        }
+    }
+    out <-- length;
+}
+
+template ObjectIdentifierParser(N) { 
+    signal input in[N];
+    signal output out;
 }
