@@ -120,3 +120,5 @@ tmp.ptau
 # ignore auto generated test circuits
 circuits/test
 ptau
+
+private_key.pem

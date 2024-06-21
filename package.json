@@ -2,9 +2,11 @@
   "description": "asn.1 parser circom",
   "scripts": {
     "start": "npx ts-node ./src/index.ts",
-    "test": "npx mocha"
+    "test": "npx mocha",
+    "clean": "npx circomkit clean"
   },
   "dependencies": {
+    "@zk-email/circuits": "^6.1.2",
     "circomkit": "^0.0.22",
     "circomlib": "^2.0.5"
   },

@@ -1,0 +1,15 @@
+{
+  "tag": {
+    "file": "tag",
+    "template": "TagDecoder"
+  },
+  "parser": {
+    "file": "parser",
+    "template": "AsnParser",
+    "params": [1183]
+  },
+  "tag_class": {
+    "file": "tag_class",
+    "template": "BooleanConstraint"
+  }
+}
