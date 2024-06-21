@@ -67,11 +67,38 @@ describe("UTF8StringParser", () => {
   });
 });
 
+describe("ObjectIdentifierLength", () => {
+  let circuit: WitnessTester<["in"], ["out"]>;
+
+  it("It Should take calculate length oid (1.2.840.113549.1.9.15)", async () => {
+    let input = [0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x01, 0x09, 0x0f];
+    let N = input.length;
+    circuit = await CompileCircuit(CircuitName.ObjectIdentifierLength, N);
+    await circuit.calculateWitness({ in: input });
+    await circuit.expectPass({ in: input }, { out: 7 });
+  });
+
+  it("It Should take calculate length oid (2.5.29.14)", async () => {
+    let input = [0x55, 0x1d, 0x0e];
+    let N = input.length;
+    circuit = await CompileCircuit(CircuitName.ObjectIdentifierLength, N);
+    await circuit.calculateWitness({ in: input });
+    await circuit.expectPass({ in: input }, { out: 4 });
+  });
+
+  it("It Should take calculate length oid (2.16.840.1.101.3.4.2.1) ", async () => {
+    let input = [0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x01, 0x02];
+    let N = input.length;
+    circuit = await CompileCircuit(CircuitName.ObjectIdentifierLength, N);
+    await circuit.calculateWitness({ in: input });
+    await circuit.expectPass({ in: input }, { out: 9 });
+  });
+});
+
 describe("Parser", () => {
   let circuit: WitnessTester<["in"], ["out"]>;
   const N = SAMPLE_DER.length;
 
-  console.log(N);
   before(async () => {
     circuit = await circomkit.WitnessTester(`AsnParser_${N}`, {
       file: "parser",
