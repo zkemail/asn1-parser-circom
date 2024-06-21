@@ -128,7 +128,38 @@ template ObjectIdentifierLength(N) {
     out <-- length;
 }
 
-template ObjectIdentifierParser(N) { 
+template ObjectIdentifierParser(N,M) {
     signal input in[N];
-    signal output out;
+    signal output out[M];
+    
+    var tempOut[M];
+    var outputIndex = 0;
+    var n = 0;
+    var isFirst = 1;
+    
+    for (var i = 0; i < N; i++) {
+        var currBytes = in[i];
+        n = n << 7;
+        n = n | (currBytes & 0x7f);
+
+        var mst = (currBytes & 0x80) == 0 ? 1 : 0; 
+        if (mst == 1) {
+            if (isFirst == 1) {
+                var first = n \ 40; 
+                var second = n % 40;
+                tempOut[outputIndex] = first;
+                tempOut[outputIndex + 1] = second;
+                outputIndex += 2;
+                isFirst = 0;
+            } else {
+                tempOut[outputIndex] = n;
+                outputIndex++;
+            }
+            n = 0;
+        }
+    }
+    
+    for (var i = 0; i < M; i++) {
+        out[i] <-- tempOut[i];
+    }
 }
