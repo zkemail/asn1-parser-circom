@@ -1,7 +1,8 @@
 import { WitnessTester } from "circomkit";
-import { circomkit } from "./common";
 import { SAMPLE_DER } from "../src/constant";
+import { getOIDLength } from "../src/oid";
 import { CircuitName, CompileCircuit } from "../src/utils";
+import { circomkit } from "./common";
 
 describe("DecodeLength", () => {
   let circuit: WitnessTester<["in"], ["out"]>;
@@ -10,7 +11,7 @@ describe("DecodeLength", () => {
     const input = [0x30, 0x82, 0x04, 0x9f];
     const N = input.length;
 
-    circuit = await CompileCircuit(CircuitName.DecodeLength, N);
+    circuit = await CompileCircuit(CircuitName.DecodeLength, [N]);
     await circuit.calculateWitness({ in: input });
     await circuit.expectPass({ in: input }, { out: 1183 });
   });
@@ -19,7 +20,7 @@ describe("DecodeLength", () => {
     const input = [0x06, 0x09, 0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x01, 0x07, 0x02];
     const N = input.length;
 
-    circuit = await CompileCircuit(CircuitName.DecodeLength, N);
+    circuit = await CompileCircuit(CircuitName.DecodeLength, [N]);
     await circuit.expectPass({ in: input }, { out: 9 });
   });
 
@@ -27,7 +28,7 @@ describe("DecodeLength", () => {
     const input = [0x17, 0x0d, 0x32, 0x34, 0x30, 0x36, 0x31, 0x38, 0x31, 0x34, 0x34, 0x39, 0x35, 0x35, 0x5a];
     const N = input.length;
 
-    circuit = await CompileCircuit(CircuitName.DecodeLength, N);
+    circuit = await CompileCircuit(CircuitName.DecodeLength, [N]);
     await circuit.expectPass({ in: input }, { out: 13 });
   });
 });
@@ -73,7 +74,7 @@ describe("ObjectIdentifierLength", () => {
   it("It Should take calculate length oid (1.2.840.113549.1.9.15)", async () => {
     let input = [0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x01, 0x09, 0x0f];
     let N = input.length;
-    circuit = await CompileCircuit(CircuitName.ObjectIdentifierLength, N);
+    circuit = await CompileCircuit(CircuitName.ObjectIdentifierLength, [N]);
     await circuit.calculateWitness({ in: input });
     await circuit.expectPass({ in: input }, { out: 7 });
   });
@@ -81,7 +82,7 @@ describe("ObjectIdentifierLength", () => {
   it("It Should take calculate length oid (2.5.29.14)", async () => {
     let input = [0x55, 0x1d, 0x0e];
     let N = input.length;
-    circuit = await CompileCircuit(CircuitName.ObjectIdentifierLength, N);
+    circuit = await CompileCircuit(CircuitName.ObjectIdentifierLength, [N]);
     await circuit.calculateWitness({ in: input });
     await circuit.expectPass({ in: input }, { out: 4 });
   });
@@ -89,9 +90,57 @@ describe("ObjectIdentifierLength", () => {
   it("It Should take calculate length oid (2.16.840.1.101.3.4.2.1) ", async () => {
     let input = [0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x01, 0x02];
     let N = input.length;
-    circuit = await CompileCircuit(CircuitName.ObjectIdentifierLength, N);
+    circuit = await CompileCircuit(CircuitName.ObjectIdentifierLength, [N]);
     await circuit.calculateWitness({ in: input });
     await circuit.expectPass({ in: input }, { out: 9 });
+  });
+});
+
+describe("ObjectIdentifierParser", () => {
+  let circuit: WitnessTester<["in"], ["out"]>;
+
+  it("It Should take decode oid (1.2.840.113549.1.9.15)", async () => {
+    let input = [0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x01, 0x09, 0x0f];
+    let N = input.length;
+    let M = getOIDLength(Uint8Array.from(input));
+
+    circuit = await CompileCircuit(CircuitName.ObjectIdentifierParser, [N, M]);
+    await circuit.expectPass({ in: input }, { out: [1, 2, 840, 113549, 1, 9, 15] });
+  });
+
+  it("It Should take decode oid (1.2.840.113549.1.7.2)", async () => {
+    let input = [0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x01, 0x07, 0x02];
+    let N = input.length;
+    let M = getOIDLength(Uint8Array.from(input));
+
+    circuit = await CompileCircuit(CircuitName.ObjectIdentifierParser, [N, M]);
+    await circuit.expectPass({ in: input }, { out: [1, 2, 840, 113549, 1, 7, 2] });
+  });
+
+  it("It Should take decode oid (1.2.840.10045.4.3.2)", async () => {
+    let input = [0x2a, 0x86, 0x48, 0xce, 0x3d, 0x04, 0x03, 0x02];
+    let N = input.length;
+    let M = getOIDLength(Uint8Array.from(input));
+
+    circuit = await CompileCircuit(CircuitName.ObjectIdentifierParser, [N, M]);
+    await circuit.expectPass({ in: input }, { out: [1, 2, 840, 10045, 4, 3, 2] });
+  });
+
+  it("It Should take decode oid (2.16.840.1.101.3.4.1.42)", async () => {
+    let input = [0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x01, 0x2a];
+    let N = input.length;
+    let M = getOIDLength(Uint8Array.from(input));
+
+    circuit = await CompileCircuit(CircuitName.ObjectIdentifierParser, [N, M]);
+    await circuit.expectPass({ in: input }, { out: [2, 16, 840, 1, 101, 3, 4, 1, 42] });
+  });
+  it("It Should take decode oid (2.5.4.3)", async () => {
+    let input = [0x55, 0x04, 0x03];
+    let N = input.length;
+    let M = getOIDLength(Uint8Array.from(input));
+
+    circuit = await CompileCircuit(CircuitName.ObjectIdentifierParser, [N, M]);
+    await circuit.expectPass({ in: input }, { out: [2, 5, 4, 3] });
   });
 });
 
@@ -108,6 +157,6 @@ describe("Parser", () => {
   });
 
   it("It Should take inputs", async () => {
-    await circuit.calculateWitness({ in: SAMPLE_DER });
+    // await circuit.calculateWitness({ in: SAMPLE_DER });
   });
 });

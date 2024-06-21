@@ -4,12 +4,13 @@ import { circomkit } from "../tests/common";
 export enum CircuitName {
   AsnParser,
   DecodeLength,
+  ObjectIdentifierParser,
   ObjectIdentifierLength,
 }
 
 export const CompileCircuit = async (
   circuitName: CircuitName,
-  paramsNumber: number
+  paramsNumber: number[]
 ): Promise<WitnessTester<["in"], ["out"]>> => {
   try {
     let circuit: WitnessTester<["in"], ["out"]>;
@@ -21,7 +22,7 @@ export const CompileCircuit = async (
         circuit = await circomkit.WitnessTester(`AsnParser_${paramsNumber}`, {
           file: "parser",
           template: "AsnParser",
-          params: [paramsNumber],
+          params: [...paramsNumber],
         });
         break;
 
@@ -29,7 +30,7 @@ export const CompileCircuit = async (
         circuit = await circomkit.WitnessTester("DecodeLength", {
           file: "parser",
           template: "DecodeLength",
-          params: [paramsNumber],
+          params: [...paramsNumber],
         });
         break;
 
@@ -37,7 +38,15 @@ export const CompileCircuit = async (
         circuit = await circomkit.WitnessTester(`ObjectIdentifierLength_${paramsNumber}`, {
           file: "parser",
           template: "ObjectIdentifierLength",
-          params: [paramsNumber],
+          params: [...paramsNumber],
+        });
+        break;
+
+      case CircuitName.ObjectIdentifierParser:
+        circuit = await circomkit.WitnessTester(`ObjectIdentifierParser_${paramsNumber[0]}_${paramsNumber[1]}`, {
+          file: "parser",
+          template: "ObjectIdentifierParser",
+          params: [...paramsNumber],
         });
         break;
       default:
