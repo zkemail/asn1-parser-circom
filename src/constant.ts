@@ -1,8 +1,10 @@
 import { readAndParseDer } from "./cert";
 
-export const SAMPLE_DER_2: number[] = Array.from(readAndParseDer("sig-p256-der-2.txt"));
+export const SAMPLE_X_509: number[] = Array.from(readAndParseDer("X.509.txt"));
 export const SAMPLE_DER: number[] = Array.from(readAndParseDer("sig-p256-der.txt"));
-// ? EACH LINE IS ASN.1 SINGLE IN OUTPUT
+export const SAMPLE_BER: number[] = Array.from(readAndParseDer("sig-p256-ber.txt"));
+
+// ? EACH LINE IS ASN.1 SINGLE IN OUTPUT FOR X_509
 // 30 82 04 9F
 // 06 09 2A 86 48 86 F7 0D 01 07 02
 // A0 82 04 90
