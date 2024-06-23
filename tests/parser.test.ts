@@ -1,8 +1,8 @@
 import { WitnessTester } from "circomkit";
 import { SAMPLE_DER } from "../src/constant";
-import { getOIDLength } from "../src/oid";
 import { CircuitName, CompileCircuit } from "../src/utils";
 import { circomkit } from "./common";
+import { getOIDLength } from "../src/parser-utils";
 
 describe("DecodeLength", () => {
   let circuit: WitnessTester<["in"], ["out"]>;
