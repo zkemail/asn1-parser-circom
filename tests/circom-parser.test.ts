@@ -1,5 +1,5 @@
 import { WitnessTester } from "circomkit";
-import { SAMPLE_DER } from "../src/constant";
+import { SAMPLE_DER, SAMPLE_DER_EXPECTED_OID, SAMPLE_X_509 } from "../src/constant";
 import { CircuitName, CompileCircuit } from "../src/utils";
 import { circomkit } from "./common";
 import { getOIDLength } from "../src/parser-utils";
@@ -144,10 +144,9 @@ describe("ObjectIdentifierParser", () => {
   });
 });
 
-describe("Parser", () => {
+describe("Circom Parser", () => {
   let circuit: WitnessTester<["in"], ["out"]>;
   const N = SAMPLE_DER.length;
-
   before(async () => {
     circuit = await circomkit.WitnessTester(`AsnParser_${N}`, {
       file: "parser",
@@ -156,7 +155,8 @@ describe("Parser", () => {
     });
   });
 
-  it("It Should take inputs", async () => {
-    // await circuit.calculateWitness({ in: SAMPLE_DER });
+  it("It Should take calculate length of oids array", async () => {
+    await circuit.calculateWitness({ in: SAMPLE_DER });
+    await circuit.expectPass({ in: SAMPLE_DER }, { out: [SAMPLE_DER_EXPECTED_OID.length, 4] });
   });
 });
