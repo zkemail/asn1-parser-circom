@@ -1,4 +1,4 @@
-import { SAMPLE_DER_BYTES } from "./constant";
+import { SAMPLE_DER } from "./constant";
 import { parseOid, parseUTFString } from "./parser-utils";
 
 function calculateOffSet(buff: number) {
@@ -40,7 +40,7 @@ function Parser(data: number[]) {
   return ASN_ARRAY;
 }
 
-const sorted = Parser(SAMPLE_DER_BYTES);
+const sorted = Parser(SAMPLE_DER);
 
 sorted.forEach((e) => {
   if (e[0] === 0x06) {
