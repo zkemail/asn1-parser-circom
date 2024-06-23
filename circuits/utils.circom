@@ -8,6 +8,11 @@ template PrintArray(N) {
 }
 
 
+
+function calculate_offset(n){
+    return n & 0x7f;
+}
+
 function tag_class_eoc()  {
     return 0x00;
 }
