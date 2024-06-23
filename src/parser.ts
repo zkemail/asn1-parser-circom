@@ -10,7 +10,7 @@ function calculateOffSet(buff: number) {
   }
 }
 
-function Parser(data: number[]) {
+export function Parser(data: number[]) {
   let ASN_ARRAY = [];
   let i = 0;
   while (i < data.length - 1) {
@@ -67,20 +67,20 @@ function Parser(data: number[]) {
   return ASN_ARRAY;
 }
 
-const sorted = Parser(SAMPLE_BER);
-
-const oidArray: string[] = [];
-sorted.forEach((e) => {
-  if (e[0] === 0x06) {
-    oidArray.push(parseOid(e));
-  }
-  if (e[0] == 0x0c) {
-    console.log(parseUTFString(e));
-  }
-  if (e[0] == 0x04) {
-    // TODO OCTECT PARSING
-    console.log(parseUTFString(e));
-  }
-});
-console.log(oidArray.length);
-console.log(oidArray.length == SAMPLE_BER_EXPECTED_0ID.length);
+export function parserASN(asn1: number[][]) {
+  const oidArray: string[] = [];
+  const utf8Array: string[] = [];
+  asn1.forEach((e) => {
+    if (e[0] === 0x06) {
+      oidArray.push(parseOid(e));
+    }
+    if (e[0] == 0x0c) {
+      utf8Array.push(parseUTFString(e));
+    }
+    // if (e[0] == 0x04) {
+    //   // TODO OCTECT PARSING
+    //   console.log(parseUTFString(e));
+    // }
+  });
+  return { OID: oidArray, UTF8Array: utf8Array };
+}
