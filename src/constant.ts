@@ -146,3 +146,23 @@ export const SAMPLE_BER_EXPECTED_0ID = [
   "2.5.4.3",
   "1.2.840.10045.4.3.2",
 ];
+
+export const SAMPLE_X509_EXPECTED_STRING = [
+  "Telagana",
+  "Hyderabad",
+  "OrganizationDummy",
+  "Unit",
+  "dummywebsite.com",
+  "Telagana",
+  "Hyderabad",
+  "OrganizationDummy",
+  "Unit",
+  "dummywebsite.com",
+  "Telagana",
+  "Hyderabad",
+  "OrganizationDummy",
+  "Unit",
+  "dummywebsite.com",
+];
+export const SAMPLE_BER_EXPECTED_STRING = ["Test", "Test", "Test", "Test"];
+export const SAMPLE_DER_EXPECTED_STRING = ["Test", "Test", "Test", "Test"];

@@ -1,5 +1,15 @@
 import { WitnessTester } from "circomkit";
-import { SAMPLE_DER, SAMPLE_DER_EXPECTED_OID, SAMPLE_X_509 } from "../src/constant";
+import {
+  SAMPLE_BER,
+  SAMPLE_BER_EXPECTED_0ID,
+  SAMPLE_BER_EXPECTED_STRING,
+  SAMPLE_DER,
+  SAMPLE_DER_EXPECTED_OID,
+  SAMPLE_DER_EXPECTED_STRING,
+  SAMPLE_X509_EXPECTED_STRING,
+  SAMPLE_X_509,
+  SAMPLE_X_509_EXPECTED_OID,
+} from "../src/constant";
 import { CircuitName, CompileCircuit } from "../src/utils";
 import { circomkit } from "./common";
 import { getOIDLength } from "../src/parser-utils";
@@ -145,18 +155,36 @@ describe("ObjectIdentifierParser", () => {
 });
 
 describe("Circom Parser", () => {
-  let circuit: WitnessTester<["in"], ["out"]>;
-  const N = SAMPLE_DER.length;
-  before(async () => {
-    circuit = await circomkit.WitnessTester(`AsnParser_${N}`, {
-      file: "parser",
-      template: "AsnParser",
-      params: [N],
-    });
+  it("It Should take calculate length of der oids & string array", async () => {
+    const N = SAMPLE_DER.length;
+    let circuit = await CompileCircuit(CircuitName.AsnParser, [N]);
+
+    await circuit.calculateWitness({ in: SAMPLE_DER });
+    await circuit.expectPass(
+      { in: SAMPLE_DER },
+      { out: [SAMPLE_DER_EXPECTED_OID.length, SAMPLE_DER_EXPECTED_STRING.length] }
+    );
   });
 
-  it("It Should take calculate length of oids array", async () => {
-    await circuit.calculateWitness({ in: SAMPLE_DER });
-    await circuit.expectPass({ in: SAMPLE_DER }, { out: [SAMPLE_DER_EXPECTED_OID.length, 4] });
+  it("It Should take calculate length of ber oids & string array", async () => {
+    const N = SAMPLE_BER.length;
+    let circuit = await CompileCircuit(CircuitName.AsnParser, [N]);
+
+    await circuit.calculateWitness({ in: SAMPLE_BER });
+    await circuit.expectPass(
+      { in: SAMPLE_BER },
+      { out: [SAMPLE_BER_EXPECTED_0ID.length, SAMPLE_BER_EXPECTED_STRING.length] }
+    );
+  });
+
+  it("It Should take calculate length of X_509 oids & string array", async () => {
+    const N = SAMPLE_X_509.length;
+    let circuit = await CompileCircuit(CircuitName.AsnParser, [N]);
+
+    await circuit.calculateWitness({ in: SAMPLE_X_509 });
+    await circuit.expectPass(
+      { in: SAMPLE_X_509 },
+      { out: [SAMPLE_X_509_EXPECTED_OID.length, SAMPLE_X509_EXPECTED_STRING.length] }
+    );
   });
 });

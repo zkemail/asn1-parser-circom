@@ -2,8 +2,11 @@ import assert from "assert";
 import {
   SAMPLE_BER,
   SAMPLE_BER_EXPECTED_0ID,
+  SAMPLE_BER_EXPECTED_STRING,
   SAMPLE_DER,
   SAMPLE_DER_EXPECTED_OID,
+  SAMPLE_DER_EXPECTED_STRING,
+  SAMPLE_X509_EXPECTED_STRING,
   SAMPLE_X_509,
   SAMPLE_X_509_EXPECTED_OID,
 } from "../src/constant";
@@ -35,6 +38,30 @@ describe("Typescript Asn.1 Parser", () => {
     assert.equal(ASN_X509_OID.length, SAMPLE_X_509_EXPECTED_OID.length);
     for (let i = 0; i < SAMPLE_BER_EXPECTED_0ID.length; i++) {
       assert.equal(ASN_X509_OID[i], SAMPLE_X_509_EXPECTED_OID[i]);
+    }
+  });
+
+  it("It Should calculate DER String", () => {
+    const ASN_STRING_ARR = ASN_DER.UTF8Array;
+    assert.equal(ASN_STRING_ARR.length, SAMPLE_DER_EXPECTED_STRING.length);
+    for (let i = 0; i < SAMPLE_DER_EXPECTED_STRING.length; i++) {
+      assert.equal(ASN_STRING_ARR[i], SAMPLE_DER_EXPECTED_STRING[i]);
+    }
+  });
+
+  it("It Should calculate BER String", () => {
+    const ASN_STRING_ARR = ASN_BER.UTF8Array;
+    assert.equal(ASN_STRING_ARR.length, SAMPLE_BER_EXPECTED_STRING.length);
+    for (let i = 0; i < SAMPLE_BER_EXPECTED_STRING.length; i++) {
+      assert.equal(ASN_STRING_ARR[i], SAMPLE_BER_EXPECTED_STRING[i]);
+    }
+  });
+
+  it("It Should calculate X.509 String", () => {
+    const ASN_STRING_ARR = ASN_X509.UTF8Array;
+    assert.equal(ASN_STRING_ARR.length, SAMPLE_X509_EXPECTED_STRING.length);
+    for (let i = 0; i < SAMPLE_X509_EXPECTED_STRING.length; i++) {
+      assert.equal(ASN_STRING_ARR[i], SAMPLE_X509_EXPECTED_STRING[i]);
     }
   });
 });
