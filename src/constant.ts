@@ -1,5 +1,14 @@
 import { readAndParseDer } from "./cert";
 
+export const ASN1_TAGS = {
+  SEQUENCE: 0x30,
+  SET: 0x31,
+  CONTEXT_SPECIFIC_0: 0xa0,
+  CONTEXT_SPECIFIC_1: 0xa1,
+  CONTEXT_SPECIFIC_3: 0xa3,
+  CONTEXT_SPECIFIC_4: 0xa4,
+  OCTET_STRING: 0x04,
+};
 export const SAMPLE_X_509: number[] = Array.from(readAndParseDer("X.509.txt"));
 export const SAMPLE_DER: number[] = Array.from(readAndParseDer("sig-p256-der.txt"));
 export const SAMPLE_BER: number[] = Array.from(readAndParseDer("sig-p256-ber.txt"));

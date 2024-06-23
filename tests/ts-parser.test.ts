@@ -7,12 +7,12 @@ import {
   SAMPLE_X_509,
   SAMPLE_X_509_EXPECTED_OID,
 } from "../src/constant";
-import { Parser, parserASN } from "../src/parser";
+import { ASN } from "./../src/parser";
 
 describe("Typescript Asn.1 Parser", () => {
-  const ASN_DER = parserASN(Parser(SAMPLE_DER));
-  const ASN_BER = parserASN(Parser(SAMPLE_BER));
-  const ASN_X509 = parserASN(Parser(SAMPLE_X_509));
+  const ASN_DER = ASN.decode(ASN.parse(SAMPLE_DER));
+  const ASN_BER = ASN.decode(ASN.parse(SAMPLE_BER));
+  const ASN_X509 = ASN.decode(ASN.parse(SAMPLE_X_509));
 
   it("It Should calculate DER Object Identifier ", () => {
     const ASN_DER_OID = ASN_DER.OID;
