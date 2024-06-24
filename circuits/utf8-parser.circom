@@ -1,8 +1,8 @@
 pragma circom 2.0.0;
 
-include "./parser.circom";
-include "./circomlib/circuits/poseidon.circom";
-include "./circomlib/circuits/comparators.circom";
+include "parser.circom";
+include "circomlib/circuits/poseidon.circom";
+include "circomlib/circuits/comparators.circom";
 
 /**
  * @title UTF8StringProver

@@ -1,8 +1,8 @@
 pragma circom 2.0.0;
 
 include "@zk-email/circuits/utils/array.circom";
-include "./utils.circom";
-include "./tag_class.circom";
+include "utils.circom";
+include "tag_class.circom";
 
 template AsnParser(N, lengthOfOid, lengthOfUtf8) { 
     // TODO: FIGURE OUT WAY TO ARRANGE AND SEND OUTPUT;

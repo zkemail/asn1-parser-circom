@@ -1,10 +1,23 @@
 {
-  "description": "asn.1 parser circom",
+  "name": "asn1-parser-circom",
+  "description": "circom asn.1 der and ber parser",
   "scripts": {
     "start": "npx ts-node ./src/index.ts",
     "test": "npx mocha",
     "clean": "npx circomkit clean"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/0xVikasRushi/asn1-parser-circom"
+  },
+  "keywords": [
+    "circom",
+    "asn1",
+    "der",
+    "ber",
+    "zk"
+  ],
+  "license": "MIT",
   "dependencies": {
     "@zk-email/circuits": "^6.1.2",
     "circomkit": "^0.0.22",
