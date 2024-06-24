@@ -5,26 +5,24 @@ include "./utils.circom";
 include "./tag_class.circom";
 
 template AsnParser(N, lengthOfOid, lengthOfUtf8) { 
+    // TODO: FIGURE OUT WAY TO ARRANGE AND SEND OUTPUT;
     signal input in[N];
     signal output OID[lengthOfOid];
     signal output UTF8[lengthOfUtf8];   
 
-    var SEQUENCE           =  0x30;
-    var SET                =  0x31;
-    var CONTEXT_SPECIFIC_0 =  0xa0;
-    var CONTEXT_SPECIFIC_1 =  0xa1;
-    var CONTEXT_SPECIFIC_3 =  0xa3;
-    var CONTEXT_SPECIFIC_4 =  0xa4;
-    var OCTET_STRING       =  0x04;
-    var OBJECT_IDENTIFIER  =  0x06;
-    var UTF8_STRING        =  0x0c;
+    component asnStartAndEndIndex =  AsnStartAndEndIndex(N,lengthOfOid,lengthOfUtf8);
+    asnStartAndEndIndex.in <== in;
 
-    
+    signal outRangeForOID[lengthOfOid][2] <== asnStartAndEndIndex.outRangeForOID;
+    signal outRangeForUTF8[lengthOfUtf8][2] <== asnStartAndEndIndex.outRangeForUTF8;
+
+    // ? outRangeForOID  Contains all start,End Index 
+    // ? outRangeForUTF8 Contains all utf8 start,endIndex
 }
 
-template AsnStartAndEndIndex(N,lengthOfUID,lengthOfString) {
+template AsnStartAndEndIndex(N,lengthOfOid,lengthOfString) {
     signal input in[N];
-    signal output outRangeForOID[lengthOfUID][2];
+    signal output outRangeForOID[lengthOfOid][2];
     signal output outRangeForUTF8[lengthOfString][2];
 
     var SEQUENCE           =  0x30;
@@ -43,15 +41,10 @@ template AsnStartAndEndIndex(N,lengthOfUID,lengthOfString) {
      var  num_of_oids = 0;
      var  num_of_utf8 = 0;
 
-    var startIndicesOids[lengthOfUID];
-    var endIndicesOids[lengthOfUID];
+    var startIndicesOids[lengthOfOid];
+    var endIndicesOids[lengthOfOid];
     var startIndicesUTF8[lengthOfString];
     var endIndicesUTF8[lengthOfString];
-
-    // for (var j = 0; j < N; j++) {
-    //     startIndices[j] <== 0;
-    //     endIndices[j] <== 0;
-    // }
 
      while (i < N - 1){
       var ASN_TAG = in[i];
@@ -114,7 +107,7 @@ template AsnStartAndEndIndex(N,lengthOfUID,lengthOfString) {
     }
 
 
-    for(var k = 0; k < lengthOfUID ;k++) {
+    for(var k = 0; k < lengthOfOid ;k++) {
         outRangeForOID[k][0] <-- startIndicesOids[k];
         outRangeForOID[k][1] <-- endIndicesOids[k];
     }

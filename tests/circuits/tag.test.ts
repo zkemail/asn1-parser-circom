@@ -1,6 +1,6 @@
 import { WitnessTester } from "circomkit";
-import { circomkit } from "../../common";
-import { tagDecoder } from "../../../src/tag";
+import { circomkit } from "../common";
+import { tagDecoder } from "../../src/tag";
 
 describe("TagDecoder", () => {
   let circuit: WitnessTester<["n"], ["tagClass", "tagConstructed", "tagNumber"]>;
