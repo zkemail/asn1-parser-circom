@@ -4,8 +4,28 @@ include "@zk-email/circuits/utils/array.circom";
 include "./utils.circom";
 include "./tag_class.circom";
 
-template AsnParser(N) {
+template AsnParser(N, lengthOfOid, lengthOfUtf8) { 
     signal input in[N];
+    signal output OID[lengthOfOid];
+    signal output UTF8[lengthOfUtf8];   
+
+    var SEQUENCE           =  0x30;
+    var SET                =  0x31;
+    var CONTEXT_SPECIFIC_0 =  0xa0;
+    var CONTEXT_SPECIFIC_1 =  0xa1;
+    var CONTEXT_SPECIFIC_3 =  0xa3;
+    var CONTEXT_SPECIFIC_4 =  0xa4;
+    var OCTET_STRING       =  0x04;
+    var OBJECT_IDENTIFIER  =  0x06;
+    var UTF8_STRING        =  0x0c;
+
+    
+}
+
+template AsnLengthForEachOID(N) {
+    signal input in[N];
+    // out[0] length of oid array
+    // out[1] length of utf8 array
     signal output out[2];  
     
     var SEQUENCE           =  0x30;
@@ -40,7 +60,7 @@ template AsnParser(N) {
             var endIndex = i + offset + 2;
             i = endIndex;
           } else{
-                i += 2; // short form
+                i += 2; //  short form
           }
       }
         else if (ASN_TAG == OCTET_STRING){
