@@ -5,8 +5,9 @@ import { circomkit } from "../common";
 describe("UTF8StringProver", () => {
   let circuit: WitnessTester<["in", "stateName", "oid"], ["out"]>;
   let N = SAMPLE_X_509.length;
-  const stateName = Array.from(Buffer.from("Telagana"));
-  const oid = [2, 5, 4, 8];
+  const stateName = Array.from(Buffer.from("OrganizationDummy"));
+  console.log(stateName);
+  const oid = [2, 5, 4, 10];
 
   before(async () => {
     circuit = await circomkit.WitnessTester("UTF8StringProver", {
@@ -17,12 +18,18 @@ describe("UTF8StringProver", () => {
   });
 
   it("It Should take inputs UTF8StringProver", async () => {
-    const witness = await circuit.calculateWitness({
+    await circuit.calculateWitness({
       in: SAMPLE_X_509,
       stateName: stateName,
       oid: oid,
     });
-    // const ak = await circuit.readWitnessSignals(witness, ["out"]);
-    // console.log(ak);
   });
+
+  // it("It Should take inputs UTF8StringProver", async () => {
+  //   await circuit.calculateWitness({
+  //     in: SAMPLE_X_509,
+  //     stateName: stateName,
+  //     oid: oid,
+  //   });
+  // });
 });
