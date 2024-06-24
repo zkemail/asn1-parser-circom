@@ -22,7 +22,110 @@ template AsnParser(N, lengthOfOid, lengthOfUtf8) {
     
 }
 
-template AsnLengthForEachOID(N) {
+template AsnStartAndEndIndex(N,lengthOfUID,lengthOfString) {
+    signal input in[N];
+    signal output outRangeForOID[lengthOfUID][2];
+    signal output outRangeForUTF8[lengthOfString][2];
+
+    var SEQUENCE           =  0x30;
+    var SET                =  0x31;
+    var CONTEXT_SPECIFIC_0 =  0xa0;
+    var CONTEXT_SPECIFIC_1 =  0xa1;
+    var CONTEXT_SPECIFIC_3 =  0xa3;
+    var CONTEXT_SPECIFIC_4 =  0xa4;
+    var OCTET_STRING       =  0x04;
+    var OBJECT_IDENTIFIER  =  0x06;
+    var UTF8_STRING        =  0x0c;
+
+
+     var i = 0;
+
+     var  num_of_oids = 0;
+     var  num_of_utf8 = 0;
+
+    var startIndicesOids[lengthOfUID];
+    var endIndicesOids[lengthOfUID];
+    var startIndicesUTF8[lengthOfString];
+    var endIndicesUTF8[lengthOfString];
+
+    // for (var j = 0; j < N; j++) {
+    //     startIndices[j] <== 0;
+    //     endIndices[j] <== 0;
+    // }
+
+     while (i < N - 1){
+      var ASN_TAG = in[i];
+      var ASN_LENGTH = in[i + 1];
+
+      if (
+      ASN_TAG == SEQUENCE || 
+      ASN_TAG == SET ||
+      ASN_TAG == CONTEXT_SPECIFIC_0 ||
+      ASN_TAG ==  CONTEXT_SPECIFIC_1 || 
+      ASN_TAG ==  CONTEXT_SPECIFIC_3 || 
+      ASN_TAG ==  CONTEXT_SPECIFIC_4
+      ){
+          var isLongForm = (ASN_LENGTH & 0x80) == 0 ? 0 : 1;
+          if (isLongForm == 1){
+            var offset = calculate_offset(ASN_LENGTH);
+            var endIndex = i + offset + 2;
+            i = endIndex;
+          } else{
+                i += 2; 
+          }
+      }
+        else if (ASN_TAG == OCTET_STRING){
+             var isLongForm = (ASN_LENGTH & 0x80) == 0 ? 0 : 1;
+             var length = 0;
+                if (isLongForm) {
+                    var numBytes = ASN_LENGTH & 0x7f;
+                    var temp = numBytes;
+                    var currentIndex = i + 2;
+                        while (numBytes > 0) {
+                                length = (length << 8) | in[currentIndex];
+                                numBytes-=1;
+                                currentIndex+=1;
+                            }
+                    var startIndex = i;
+                    var endIndex = startIndex + length + temp + 2;
+                    i = endIndex;
+                } else{
+                    var startIndex = i;
+                    var endIndex = startIndex + ASN_LENGTH + 2;
+                    i = endIndex;
+                }
+        }
+        else {
+                var startIndex = i;
+                var endIndex = startIndex + ASN_LENGTH + 2;
+                i = endIndex;
+
+                if (ASN_TAG ==  OBJECT_IDENTIFIER) {
+                    startIndicesOids[num_of_oids] =  startIndex;
+                    endIndicesOids[num_of_oids] = endIndex;
+                    num_of_oids++;
+                }
+                if (ASN_TAG ==  UTF8_STRING) {
+                    startIndicesUTF8[num_of_utf8] =  startIndex;
+                    endIndicesUTF8[num_of_utf8]   = endIndex;
+                    num_of_utf8++;
+                }
+        }
+    }
+
+
+    for(var k = 0; k < lengthOfUID ;k++) {
+        outRangeForOID[k][0] <-- startIndicesOids[k];
+        outRangeForOID[k][1] <-- endIndicesOids[k];
+    }
+
+    for(var l = 0; l < lengthOfString ;l++) {
+        outRangeForUTF8[l][0] <-- startIndicesUTF8[l];
+        outRangeForUTF8[l][1] <-- endIndicesUTF8[l];
+    }
+}
+
+template AsnLength(N) {
     signal input in[N];
     // out[0] length of oid array
     // out[1] length of utf8 array
