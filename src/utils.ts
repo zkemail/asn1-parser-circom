@@ -6,6 +6,7 @@ export enum CircuitName {
   DecodeLength,
   ObjectIdentifierParser,
   ObjectIdentifierLength,
+  AsnLength,
 }
 
 export const CompileCircuit = async (
@@ -15,13 +16,13 @@ export const CompileCircuit = async (
   try {
     let circuit: WitnessTester<["in"], ["out"]>;
     switch (circuitName) {
-      case CircuitName.AsnParser:
+      case CircuitName.AsnLength:
         if (paramsNumber == null) {
           throw new Error("Param Number is not defined");
         }
-        circuit = await circomkit.WitnessTester(`AsnParser_${paramsNumber}`, {
+        circuit = await circomkit.WitnessTester(`AsnLength_${paramsNumber}`, {
           file: "parser",
-          template: "AsnParser",
+          template: "AsnLength",
           params: [...paramsNumber],
         });
         break;

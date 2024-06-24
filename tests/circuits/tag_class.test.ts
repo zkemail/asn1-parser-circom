@@ -1,4 +1,4 @@
-import { circomkit } from "./common";
+import { circomkit } from "../common";
 
 describe("TagClass", async () => {
   it("should satisfy BooleanConstraint", async () => {

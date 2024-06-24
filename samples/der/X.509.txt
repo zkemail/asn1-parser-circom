@@ -1,4 +1,4 @@
-https://github.com/lapo-luchini/asn1js/blob/trunk/examples/sig-p256-der.p7m
+$ openssl req -new -x509 -key private_key.pem -out cert.pem -days 365 -subj "/C=IN/ST=Telagana/L=Hyderabad/O=OrganizationDummy/OU=Unit/CN=dummywebsite.com" 
 This is a PKCS#7/CMS attached digital signature.
 It is signed using ecdsaWithSHA256 over NIST curve P-256
 -----BEGIN PKCS7-----

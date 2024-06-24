@@ -9,8 +9,8 @@ import {
   SAMPLE_X509_EXPECTED_STRING,
   SAMPLE_X_509,
   SAMPLE_X_509_EXPECTED_OID,
-} from "../src/constant";
-import { ASN } from "./../src/parser";
+} from "../../src/constant";
+import { ASN } from "../../src/parser";
 
 describe("Typescript Asn.1 Parser", () => {
   const ASN_DER = ASN.decode(ASN.parse(SAMPLE_DER));
