@@ -188,3 +188,21 @@ describe("Circom Parser", () => {
     );
   });
 });
+
+describe("Circom Parser Range Circuit", () => {
+  let circuit: WitnessTester<["in"], ["out"]>;
+  const N = SAMPLE_DER.length;
+  const lengthOfUID = 44;
+  const lengthOfString = 4;
+
+  before(async () => {
+    circuit = await circomkit.WitnessTester(`AsnStartAndEndIndex_${N}_${lengthOfUID}_${lengthOfString}`, {
+      file: "parser",
+      template: "AsnStartAndEndIndex",
+      params: [N, lengthOfUID, lengthOfString],
+    });
+  });
+  it("It Should take input", async () => {
+    await circuit.calculateWitness({ in: SAMPLE_DER });
+  });
+});
