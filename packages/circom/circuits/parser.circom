@@ -1,6 +1,6 @@
 pragma circom 2.0.0;
 
-include "@zk-email/circuits/utils/array.circom";
+include "../../node_modules/@zk-email/circuits/utils/array.circom";
 include "utils.circom";
 include "tag_class.circom";
 

@@ -118,7 +118,11 @@ tmp.ptau
 .DS_Store
 
 # ignore auto generated test circuits
-circuits/test
+packages/circom/circuits/test
 ptau
 
+**/node_modules
+**/build
+
 private_key.pem
+.yarn

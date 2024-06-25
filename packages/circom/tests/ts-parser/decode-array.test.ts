@@ -1,5 +1,9 @@
 import assert from "assert";
-import { arrayToBigNumber, bigNumberToArray, generateRandomArray } from "../../src/array_to_bigInt";
+import {
+  arrayToBigNumber,
+  bigNumberToArray,
+  generateRandomArray,
+} from "../../src/array_to_bigInt";
 
 describe("arrayToBigNumber", () => {
   const testCases: bigint[][] = [

@@ -21,7 +21,13 @@ describe("UTF8StringProver X_509", () => {
     circuit = await circomkit.WitnessTester("UTF8StringProver", {
       file: "utf8-parser",
       template: "UTF8StringProver",
-      params: [N, stateName.length, oid.length, SAMPLE_X_509_EXPECTED_OID.length, SAMPLE_X509_EXPECTED_STRING.length],
+      params: [
+        N,
+        stateName.length,
+        oid.length,
+        SAMPLE_X_509_EXPECTED_OID.length,
+        SAMPLE_X509_EXPECTED_STRING.length,
+      ],
     });
     await circuit.calculateWitness({
       in: SAMPLE_X_509,
@@ -37,7 +43,13 @@ describe("UTF8StringProver X_509", () => {
     circuit = await circomkit.WitnessTester("UTF8StringProver", {
       file: "utf8-parser",
       template: "UTF8StringProver",
-      params: [N, stateName.length, oid.length, SAMPLE_X_509_EXPECTED_OID.length, SAMPLE_X509_EXPECTED_STRING.length],
+      params: [
+        N,
+        stateName.length,
+        oid.length,
+        SAMPLE_X_509_EXPECTED_OID.length,
+        SAMPLE_X509_EXPECTED_STRING.length,
+      ],
     });
 
     await circuit.calculateWitness({
@@ -54,7 +66,13 @@ describe("UTF8StringProver X_509", () => {
     circuit = await circomkit.WitnessTester("UTF8StringProver", {
       file: "utf8-parser",
       template: "UTF8StringProver",
-      params: [N, stateName.length, oid.length, SAMPLE_X_509_EXPECTED_OID.length, SAMPLE_X509_EXPECTED_STRING.length],
+      params: [
+        N,
+        stateName.length,
+        oid.length,
+        SAMPLE_X_509_EXPECTED_OID.length,
+        SAMPLE_X509_EXPECTED_STRING.length,
+      ],
     });
 
     await circuit.calculateWitness({
@@ -71,7 +89,13 @@ describe("UTF8StringProver X_509", () => {
     circuit = await circomkit.WitnessTester("UTF8StringProver", {
       file: "utf8-parser",
       template: "UTF8StringProver",
-      params: [N, stateName.length, oid.length, SAMPLE_X_509_EXPECTED_OID.length, SAMPLE_X509_EXPECTED_STRING.length],
+      params: [
+        N,
+        stateName.length,
+        oid.length,
+        SAMPLE_X_509_EXPECTED_OID.length,
+        SAMPLE_X509_EXPECTED_STRING.length,
+      ],
     });
 
     await circuit.expectFail({
@@ -88,7 +112,13 @@ describe("UTF8StringProver X_509", () => {
     circuit = await circomkit.WitnessTester("UTF8StringProver", {
       file: "utf8-parser",
       template: "UTF8StringProver",
-      params: [N, stateName.length, oid.length, SAMPLE_X_509_EXPECTED_OID.length, SAMPLE_X509_EXPECTED_STRING.length],
+      params: [
+        N,
+        stateName.length,
+        oid.length,
+        SAMPLE_X_509_EXPECTED_OID.length,
+        SAMPLE_X509_EXPECTED_STRING.length,
+      ],
     });
 
     await circuit.expectFail({
@@ -109,7 +139,13 @@ describe("UTF8StringProver DER", () => {
     circuit = await circomkit.WitnessTester("UTF8StringProver", {
       file: "utf8-parser",
       template: "UTF8StringProver",
-      params: [N, stateName.length, oid.length, SAMPLE_DER_EXPECTED_OID.length, SAMPLE_DER_EXPECTED_STRING.length],
+      params: [
+        N,
+        stateName.length,
+        oid.length,
+        SAMPLE_DER_EXPECTED_OID.length,
+        SAMPLE_DER_EXPECTED_STRING.length,
+      ],
     });
 
     await circuit.calculateWitness({
@@ -130,7 +166,13 @@ describe("UTF8StringProver BER", () => {
     circuit = await circomkit.WitnessTester("UTF8StringProver", {
       file: "utf8-parser",
       template: "UTF8StringProver",
-      params: [N, stateName.length, oid.length, SAMPLE_DER_EXPECTED_OID.length, SAMPLE_BER_EXPECTED_STRING.length],
+      params: [
+        N,
+        stateName.length,
+        oid.length,
+        SAMPLE_DER_EXPECTED_OID.length,
+        SAMPLE_BER_EXPECTED_STRING.length,
+      ],
     });
 
     await circuit.calculateWitness({

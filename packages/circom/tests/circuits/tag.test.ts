@@ -3,7 +3,10 @@ import { circomkit } from "../common";
 import { tagDecoder } from "../../src/tag";
 
 describe("TagDecoder", () => {
-  let circuit: WitnessTester<["n"], ["tagClass", "tagConstructed", "tagNumber"]>;
+  let circuit: WitnessTester<
+    ["n"],
+    ["tagClass", "tagConstructed", "tagNumber"]
+  >;
 
   before(async () => {
     circuit = await circomkit.WitnessTester("tagDecoder", {

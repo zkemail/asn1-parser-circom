@@ -6,7 +6,10 @@ export function arrayToBigNumber(arr: bigint[]): bigint {
 }
 
 // Function to convert BigNumber back to array of 64-bit numbers
-export function bigNumberToArray(bigNum: bigint, arrayLength: number): bigint[] {
+export function bigNumberToArray(
+  bigNum: bigint,
+  arrayLength: number
+): bigint[] {
   const mask = (1n << 64n) - 1n;
   const result: bigint[] = [];
   for (let i = 0; i < arrayLength; i++) {
@@ -18,7 +21,8 @@ export function bigNumberToArray(bigNum: bigint, arrayLength: number): bigint[] 
 // Function to generate random 64-bit number
 export function randomUint64(): bigint {
   return (
-    BigInt(Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)) * BigInt(2) + BigInt(Math.floor(Math.random() * 2))
+    BigInt(Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)) * BigInt(2) +
+    BigInt(Math.floor(Math.random() * 2))
   );
 }
 
