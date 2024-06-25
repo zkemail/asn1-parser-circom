@@ -1,6 +1,6 @@
 pragma circom 2.0.0;
 
-include "utils.circom";
+include "./utils.circom";
 
 template BooleanConstraint() { 
     signal input in;

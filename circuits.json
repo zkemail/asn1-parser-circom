@@ -1,4 +1,9 @@
 {
+  "utf8prover": {
+    "file": "utf8-parser",
+    "template": "UTF8StringProver",
+    "params": [20000, 30, 30, 80, 80]
+  },
   "tag": {
     "file": "tag",
     "template": "TagDecoder"

@@ -1,7 +1,6 @@
 pragma circom 2.0.0;
 
-include "parser.circom";
-include "circomlib/circuits/poseidon.circom";
+include "./parser.circom";
 include "circomlib/circuits/comparators.circom";
 
 /**
@@ -19,7 +18,6 @@ template UTF8StringProver(maxLength, maxStateNameLen, maxOidLen, maxLengthOfOid,
     signal input oid[maxOidLen]; 
     signal input stateName[maxStateNameLen]; 
 
-
     signal input actualLength;
 
     signal input stateNameLen;
@@ -32,7 +30,7 @@ template UTF8StringProver(maxLength, maxStateNameLen, maxOidLen, maxLengthOfOid,
 
     component asnStartAndEndIndex = AsnStartAndEndIndex(maxLength, maxLengthOfOid, maxLengthOfUtf8);
     asnStartAndEndIndex.in <== in;
-    asnStartAndEndIndex.actualLength <==actualLength;
+    asnStartAndEndIndex.actualLength <== actualLength;
     asnStartAndEndIndex.actualLengthOfOid <== lengthOfOid;
     asnStartAndEndIndex.actualLengthOfString <== lengthOfUtf8;
 

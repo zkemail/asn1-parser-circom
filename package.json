@@ -4,7 +4,8 @@
   "scripts": {
     "start": "npx ts-node ./src/index.ts",
     "test": "npx mocha",
-    "clean": "npx circomkit clean"
+    "clean": "npx circomkit clean",
+    "compile:utf8": "npx circomkit compile utf8prover && npx circomkit setup utf8prover"
   },
   "repository": {
     "type": "git",
