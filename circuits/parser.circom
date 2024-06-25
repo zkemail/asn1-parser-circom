@@ -20,10 +20,16 @@ template AsnParser(N, lengthOfOid, lengthOfUtf8) {
     // ? outRangeForUTF8 Contains all utf8 start,endIndex
 }
 
-template AsnStartAndEndIndex(N,lengthOfOid,lengthOfString) {
-    signal input in[N];
-    signal output outRangeForOID[lengthOfOid][2];
-    signal output outRangeForUTF8[lengthOfString][2];
+template AsnStartAndEndIndex(maxLength, maxlengthOfOid, maxlengthOfString) {
+    signal input  in[maxLength];
+    signal input  actualLength;
+    signal input  actualLengthOfOid;
+    signal input  actualLengthOfString;
+
+
+    signal output outRangeForOID[maxlengthOfOid][2];
+    signal output outRangeForUTF8[maxlengthOfString][2];
+
 
     var SEQUENCE           =  0x30;
     var SET                =  0x31;
@@ -41,12 +47,12 @@ template AsnStartAndEndIndex(N,lengthOfOid,lengthOfString) {
      var  num_of_oids = 0;
      var  num_of_utf8 = 0;
 
-    var startIndicesOids[lengthOfOid];
-    var endIndicesOids[lengthOfOid];
-    var startIndicesUTF8[lengthOfString];
-    var endIndicesUTF8[lengthOfString];
+    var startIndicesOids[maxlengthOfOid];
+    var endIndicesOids[maxlengthOfOid];
+    var startIndicesUTF8[maxlengthOfString];
+    var endIndicesUTF8[maxlengthOfString];
 
-     while (i < N - 1){
+     while (i < actualLength - 1){
       var ASN_TAG = in[i];
       var ASN_LENGTH = in[i + 1];
 
@@ -107,12 +113,12 @@ template AsnStartAndEndIndex(N,lengthOfOid,lengthOfString) {
     }
 
 
-    for(var k = 0; k < lengthOfOid ;k++) {
+    for(var k = 0; k < maxlengthOfOid ;k++) {
         outRangeForOID[k][0] <-- startIndicesOids[k];
         outRangeForOID[k][1] <-- endIndicesOids[k];
     }
 
-    for(var l = 0; l < lengthOfString ;l++) {
+    for(var l = 0; l < maxlengthOfString ;l++) {
         outRangeForUTF8[l][0] <-- startIndicesUTF8[l];
         outRangeForUTF8[l][1] <-- endIndicesUTF8[l];
     }

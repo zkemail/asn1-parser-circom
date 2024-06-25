@@ -1,5 +1,8 @@
 import { WitnessTester } from "circomkit";
 import {
+  MAX_INPUT_LENGTH,
+  MAX_OID_OUTPUT_LENGTH,
+  MAX_UTF8_OUTPUT_LENGTH,
   SAMPLE_BER,
   SAMPLE_BER_EXPECTED_0ID,
   SAMPLE_BER_EXPECTED_STRING,
@@ -190,37 +193,59 @@ describe("Circom Parser", () => {
 });
 
 describe("Circom Parser Range Circuit", () => {
-  let circuit: WitnessTester<["in"], ["out"]>;
-  const N = SAMPLE_DER.length;
+  let circuit: WitnessTester<["in", "actualLength", "actualLengthOfOid", "actualLengthOfString"], ["out"]>;
+  const N = MAX_INPUT_LENGTH;
   const lengthOfOID = 44;
   const lengthOfString = 4;
 
+  const input = SAMPLE_DER;
+  const inputWithPaddingZero = input.concat(Array(N - input.length).fill(0));
+
   before(async () => {
-    circuit = await circomkit.WitnessTester(`AsnStartAndEndIndex_${N}_${lengthOfOID}_${lengthOfString}`, {
-      file: "parser",
-      template: "AsnStartAndEndIndex",
-      params: [N, lengthOfOID, lengthOfString],
-    });
+    circuit = await circomkit.WitnessTester(
+      `AsnStartAndEndIndex_${N}_${MAX_OID_OUTPUT_LENGTH}_${MAX_UTF8_OUTPUT_LENGTH}`,
+      {
+        file: "parser",
+        template: "AsnStartAndEndIndex",
+        params: [N, MAX_OID_OUTPUT_LENGTH, MAX_UTF8_OUTPUT_LENGTH],
+      }
+    );
   });
   it("It Should take input", async () => {
-    await circuit.calculateWitness({ in: SAMPLE_DER });
+    await circuit.calculateWitness({
+      in: inputWithPaddingZero,
+      actualLength: SAMPLE_DER.length,
+      actualLengthOfOid: lengthOfOID,
+      actualLengthOfString: lengthOfString,
+    });
   });
 });
 
 describe("Circom Parser Range Circuit", () => {
-  let circuit: WitnessTester<["in"], ["out"]>;
-  const N = SAMPLE_DER.length;
-  const lengthOfOID = 44;
-  const lengthOfString = 4;
+  let circuit: WitnessTester<["in", "actualLength", "actualLengthOfOid", "actualLengthOfString"], ["out"]>;
+  const N = MAX_INPUT_LENGTH;
+  const lengthOfOID = SAMPLE_BER_EXPECTED_0ID.length;
+  const lengthOfString = SAMPLE_BER_EXPECTED_STRING.length;
+
+  const input = SAMPLE_BER;
+  const inputWithPaddingZero = input.concat(Array(N - input.length).fill(0));
 
   before(async () => {
-    circuit = await circomkit.WitnessTester(`AsnParser_${N}_${lengthOfOID}_${lengthOfString}`, {
-      file: "parser",
-      template: "AsnParser",
-      params: [N, lengthOfOID, lengthOfString],
-    });
+    circuit = await circomkit.WitnessTester(
+      `AsnStartAndEndIndex_${N}_${MAX_OID_OUTPUT_LENGTH}_${MAX_UTF8_OUTPUT_LENGTH}`,
+      {
+        file: "parser",
+        template: "AsnStartAndEndIndex",
+        params: [N, MAX_OID_OUTPUT_LENGTH, MAX_UTF8_OUTPUT_LENGTH],
+      }
+    );
   });
   it("It Should take input", async () => {
-    await circuit.calculateWitness({ in: SAMPLE_DER });
+    await circuit.calculateWitness({
+      in: inputWithPaddingZero,
+      actualLength: SAMPLE_BER.length,
+      actualLengthOfOid: lengthOfOID,
+      actualLengthOfString: lengthOfString,
+    });
   });
 });

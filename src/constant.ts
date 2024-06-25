@@ -1,5 +1,9 @@
 import { readAndParseDer } from "./cert";
 
+export const MAX_INPUT_LENGTH = 20000;
+export const MAX_OID_OUTPUT_LENGTH = 80;
+export const MAX_UTF8_OUTPUT_LENGTH = 80;
+
 export const ASN1_TAGS = {
   SEQUENCE: 0x30,
   SET: 0x31,
