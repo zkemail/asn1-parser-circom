@@ -14,17 +14,30 @@ include "circomlib/circuits/comparators.circom";
  * @param lengthOfUtf8 The number of UTF8 segments
  */
  
-template UTF8StringProver(N, stateNameLen, oidLen, lengthOfOid, lengthOfUtf8) { 
-    signal input in[N];
-    signal input stateName[stateNameLen]; 
-    signal input oid[oidLen]; 
+template UTF8StringProver(maxLength, maxStateNameLen, maxOidLen, maxLengthOfOid, maxLengthOfUtf8) { 
+    signal input in[maxLength];
+    signal input oid[maxOidLen]; 
+    signal input stateName[maxStateNameLen]; 
+
+
+    signal input actualLength;
+
+    signal input stateNameLen;
+    signal input oidLen;
+
+    signal input lengthOfOid;
+    signal input lengthOfUtf8;
+
     signal output out;
 
-    component asnStartAndEndIndex = AsnStartAndEndIndex(N, lengthOfOid, lengthOfUtf8);
+    component asnStartAndEndIndex = AsnStartAndEndIndex(maxLength, maxLengthOfOid, maxLengthOfUtf8);
     asnStartAndEndIndex.in <== in;
+    asnStartAndEndIndex.actualLength <==actualLength;
+    asnStartAndEndIndex.actualLengthOfOid <== lengthOfOid;
+    asnStartAndEndIndex.actualLengthOfString <== lengthOfUtf8;
 
-    signal outRangeForOID[lengthOfOid][2] <== asnStartAndEndIndex.outRangeForOID;
-    signal outRangeForUTF8[lengthOfUtf8][2] <== asnStartAndEndIndex.outRangeForUTF8;
+    signal outRangeForOID[maxLengthOfOid][2] <== asnStartAndEndIndex.outRangeForOID;
+    signal outRangeForUTF8[maxLengthOfUtf8][2] <== asnStartAndEndIndex.outRangeForUTF8;
 
     var isFoundTest = 0;
 
@@ -51,7 +64,7 @@ template UTF8StringProver(N, stateNameLen, oidLen, lengthOfOid, lengthOfUtf8) {
 
         // Decoding OID string from buffer (refer to ObjectIdentifierParser() template)
         if (length == oidLen) {
-            var oidCalc[oidLen];
+            var oidCalc[maxOidLen];
             var outputIndex = 0;
             var n = 0;
             isFirst = 1;

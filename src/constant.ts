@@ -4,6 +4,9 @@ export const MAX_INPUT_LENGTH = 20000;
 export const MAX_OID_OUTPUT_LENGTH = 80;
 export const MAX_UTF8_OUTPUT_LENGTH = 80;
 
+export const MAX_ACTUAL_STATE_NAME_LEN = 30;
+export const MAX_ACTUAL_OID_LENGTH = 30;
+
 export const ASN1_TAGS = {
   SEQUENCE: 0x30,
   SET: 0x31,
@@ -13,6 +16,10 @@ export const ASN1_TAGS = {
   CONTEXT_SPECIFIC_4: 0xa4,
   OCTET_STRING: 0x04,
 };
+
+export const MAX_STATE_NAME_LEN = 30;
+export const MAX_OID_LENGTH = 30;
+
 export const SAMPLE_X_509: number[] = Array.from(readAndParseDer("X.509.txt"));
 export const SAMPLE_DER: number[] = Array.from(readAndParseDer("sig-p256-der.txt"));
 export const SAMPLE_BER: number[] = Array.from(readAndParseDer("sig-p256-ber.txt"));
