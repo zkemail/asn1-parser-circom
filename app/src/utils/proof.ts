@@ -23,16 +23,16 @@ export class Proof {
   }
 }
 
-// async function main() {
-//   const s = new Proof();
-//   try {
-//     const { proof, publicSignals } = await s.generate(SAMPLE_INPUT);
-//     const result = await s.verify(proof, publicSignals);
-//     console.log("Verification result:", result);
-//   } catch (error) {
-//     console.error("Error in proof generation or verification:", error);
-//   }
-// }
+export async function CalcProof() {
+  const s = new Proof();
+  try {
+    const { proof, publicSignals } = await s.generate(SAMPLE_INPUT);
+    const result = await s.verify(proof, publicSignals);
+    console.log("Verification result:", result);
+  } catch (error) {
+    console.error("Error in proof generation or verification:", error);
+  }
+}
 
 // main().then(() => {
 //   process.exit(0);
