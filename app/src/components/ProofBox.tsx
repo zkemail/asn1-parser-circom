@@ -7,6 +7,7 @@ import { Utf8CircuitProver } from "../utils/proof";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import axios from "axios";
 
 interface OidItemProps {
   oid: string;
@@ -52,7 +53,6 @@ export default function OidItem({ oid, info, inputBytes, expectedLength }: OidIt
         oidLen: oidArray.length,
         stateNameLen: utf8Param.length,
       };
-      console.log(inputs);
       const { proof, publicSignals } = await Utf8CircuitProver.generate(inputs);
       console.log(proof, publicSignals);
       setProof(JSON.stringify(proof, null, 2));
@@ -60,6 +60,8 @@ export default function OidItem({ oid, info, inputBytes, expectedLength }: OidIt
       setStatus(Status.proofGenerated);
       toast.info("Proof generated successfully", { position: "top-right", autoClose: 3000 });
     } catch (error) {
+      setProof("");
+      setStatus(Status.proofNotVerified);
       console.error("Error generating proof:", error);
       toast.error("Error generating proof", { position: "top-right", autoClose: 3000 });
     }
