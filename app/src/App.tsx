@@ -17,7 +17,7 @@ function App() {
   const [showInputBox, setShowInputBox] = useState<boolean>(true);
   const [oidsInfo, setOidsInfo] = useState<{ [key: string]: OIDInfo }>({});
   const [inputBytes, setInputBytes] = useState<number[]>([]);
-
+  const [asn1link, setAsnLink] = useState("");
   const [expectedLengths, setExpectedLength] = useState<number[]>([0, 0]);
 
   const handleCertificateContentChange = (content: string) => {
@@ -26,7 +26,9 @@ function App() {
 
   const handleGenerateProof = () => {
     setShowInputBox(false);
-    const INPUT_BYTES = Certificate.decode(certificateContent);
+    const parsedCert = Certificate.parseCertificate(certificateContent);
+    setAsnLink("https://lapo.it/asn1js/#" + parsedCert);
+    const INPUT_BYTES = Certificate.base64ToBinary(parsedCert!);
     setInputBytes(Array.from(INPUT_BYTES));
     const parsed = ASN.decode(ASN.parse(Array.from(INPUT_BYTES)));
     const Oids = parsed.OID;
@@ -53,9 +55,19 @@ function App() {
       )}
       {!showInputBox && (
         <div className="py-6 px-4 sm:px-6 lg:px-8 bg-gray-200 rounded-md">
-          <h1 className="text-center text-2xl font-bold text-gray-800 my-8 font-mono tracking-wide border-b-4 border-indigo-500 pb-4 max-w-3xl mx-auto">
-            Zk Prove over ObjectIndentifer:String
-          </h1>
+          <div>
+            <h1 className="text-center text-2xl font-bold text-gray-800 my-8 font-mono tracking-wide border-b-4 border-indigo-500 pb-4 max-w-3xl mx-auto">
+              Zk Proof over ObjectIndentifer:String
+            </h1>
+          </div>
+          <a
+            href={asn1link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-indigo-600 hover:text-indigo-800 underline"
+          >
+            View ASN.1 content online
+          </a>
           <div className="max-w-7xl mx-auto">
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {Object.entries(oidsInfo).map(([oid, info]) => (

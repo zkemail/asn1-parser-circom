@@ -29,6 +29,10 @@ export default function OidItem({ oid, info, inputBytes, expectedLength }: OidIt
 
   const handleProof = async () => {
     try {
+      if (utf8 === "") {
+        toast.error("Proof generation failed", { position: "top-right", autoClose: 3000 });
+        return;
+      }
       const acutalLength = inputBytes.length;
       const inputWithPaddingZeros = inputBytes.concat(Array(MAX_INPUT_LENGTH - inputBytes.length).fill(0));
 

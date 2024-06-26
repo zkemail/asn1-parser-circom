@@ -5,14 +5,15 @@ This circuits can extract and verify key information from ASN.1 encoded data str
 
 > Note: This project is a work in progress and not yet recommended for production use
 
-
 ## Circuits
 
 1. **AsnStartAndEndIndex**: It identifes the start and end indices of OIDs and UTF8 strings within the input array. It outputs two arrays:
    - `outRangeForOID[maxlengthOfOid][2]`: Contains start and end indices for each OID.
    - `outRangeForUTF8[maxlengthOfString][2]`: Contains start and end indices for each UTF8 string.
 2. **UTF8StringParser**: Extracts and parses UTF8 string values from the ASN.1 structure.
-3. **AsnParser**: generic parser which extracts Integers,Signatures,UT8String and Date (WIP).
+3. **AsnParser** **(WIP)**: generic parser which extracts Integers,Signatures,UT8String and Date (WIP).
+
+This project is supported by [zkemail](https://github.com/zkemail).
 
 ## Running locally
 
@@ -27,14 +28,16 @@ yarn
 ```bash
 yarn test
 ```
+
 ## UTF8StringParser App
 
 Try out the UTF8StringParser `zk app` in action: [UTF8StringParser Demo](https://zk-asn.vercel.app/)
 
-This web application allows you to upload any vaild DER/BER/X.509 certificates and generate zero-knowledge proofs for specific UTF8 strings within the certificate. 
+This web application allows you to upload any vaild DER/BER/X.509 certificates and generate zero-knowledge proofs for specific UTF8 strings within the certificate.
 It demonstratesthe ASN.1 parsing circuits in verifying certificate data without revealing the entire certificate content.
 
 Key features:
+
 - Certificate upload
 - UTF8 string and OID input
 - Zero-knowledge proof generation and verification
@@ -44,7 +47,7 @@ Key features:
 1. **Phase-1** ASN.1 Parser
    - Extract certificate information from a given PDF.
    - Circom Circuit which take DER structure as input and extracting all information such as (e.g., issuer, subject, validity period, public key, signature algorithm, signature).
-2. **Phase-2** ZK Proof to verify data
+2. **Phase-2** ZK Proof to verify data _(WIP)_
    - Develop a circuit to prove specific aspects of the extracted data.
    - Whether document is signed with issuer name or not?
 
@@ -491,9 +494,10 @@ After processing these 5 elements, the ASN_ARRAY would look like this:
 we can look at first bytes of each array and determine its tag class and decode according to get value.
 
 ### Reference
+
 - https://datatracker.ietf.org/doc/html/rfc5280#page-96
 - https://lapo.it/asn1js/
 
 ### Credits
-A huge thank you to @lapo-luchini for creating the ASN.1 JavaScript decoder. This tool [ASN.1 JavaScript decoder](https://lapo.it/asn1js/) has been an invaluable reference for our project. 
 
+A huge thank you to @lapo-luchini for creating the ASN.1 JavaScript decoder. This tool [ASN.1 JavaScript decoder](https://lapo.it/asn1js/) has been an invaluable reference for our project.
