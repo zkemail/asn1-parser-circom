@@ -1,5 +1,5 @@
 import { WitnessTester } from "circomkit";
-import { circomkit } from "../tests/common";
+import { circomkit } from "../src";
 
 export enum CircuitName {
   AsnParser,

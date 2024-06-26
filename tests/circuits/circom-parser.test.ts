@@ -14,8 +14,8 @@ import {
   SAMPLE_X_509_EXPECTED_OID,
 } from "../../src/constant";
 import { CircuitName, CompileCircuit } from "../../src/utils";
-import { circomkit } from "../common";
 import { getOIDLength } from "../../src/parser-utils";
+import { circomkit } from "../../src";
 
 describe("DecodeLength", () => {
   let circuit: WitnessTester<["in"], ["out"]>;

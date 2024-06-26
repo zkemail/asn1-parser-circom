@@ -1,5 +1,5 @@
 import { WitnessTester } from "circomkit";
-import { circomkit } from "../common";
+import { circomkit } from "../../src";
 import { tagDecoder } from "../../src/tag";
 
 describe("TagDecoder", () => {

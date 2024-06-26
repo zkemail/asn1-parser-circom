@@ -11,7 +11,7 @@ import {
   SAMPLE_DER,
   SAMPLE_X_509,
 } from "../../src/constant";
-import { circomkit } from "../common";
+import { circomkit } from "../../src";
 
 const maxLength = MAX_INPUT_LENGTH;
 const maxStateNameLen = MAX_ACTUAL_STATE_NAME_LEN;
