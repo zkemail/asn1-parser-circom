@@ -1,11 +1,13 @@
 import { ChangeEvent, useState } from "react";
 import "./App.css";
+import { SAMPLE_BER } from "asn1-parser-circom/src";
 const options = ["DER", "BER", "X.509"];
 
 function App() {
   const [certificateContent, setCertificateContent] = useState("");
   const [certificateType, setCertificateType] = useState("DER");
   const [isSampleCheck, setIsSampleCheck] = useState(false);
+  console.log(SAMPLE_BER);
 
   const handleFileUpload = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
