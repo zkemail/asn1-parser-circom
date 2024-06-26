@@ -1,8 +1,6 @@
-async function main() {}
-
-main()
-  .then(() => process.exit(0))
-  .catch((e) => {
-    console.error(e);
-    process.exit(1);
-  });
+export * from "./cert";
+export * from "./constant";
+export * from "./parser";
+export * from "./parser-utils";
+export * from "./tag";
+export * from "./utils";
