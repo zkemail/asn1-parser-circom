@@ -5,6 +5,40 @@ This circuits can extract and verify key information from ASN.1 encoded data str
 
 > Note: This project is a work in progress and not yet recommended for production use
 
+
+## Circuits
+
+1. **AsnStartAndEndIndex**: It identifes the start and end indices of OIDs and UTF8 strings within the input array. It outputs two arrays:
+   - `outRangeForOID[maxlengthOfOid][2]`: Contains start and end indices for each OID.
+   - `outRangeForUTF8[maxlengthOfString][2]`: Contains start and end indices for each UTF8 string.
+2. **UTF8StringParser**: Extracts and parses UTF8 string values from the ASN.1 structure.
+3. **AsnParser**: generic parser which extracts Integers,Signatures,UT8String and Date (WIP).
+
+## Running locally
+
+#### Install dependencies
+
+```bash
+yarn
+```
+
+### Running tests
+
+```bash
+yarn test
+```
+## UTF8StringParser App
+
+Try out the UTF8StringParser `zk app` in action: [UTF8StringParser Demo](https://zk-asn.vercel.app/)
+
+This web application allows you to upload any vaild DER/BER/X.509 certificates and generate zero-knowledge proofs for specific UTF8 strings within the certificate. 
+It demonstratesthe ASN.1 parsing circuits in verifying certificate data without revealing the entire certificate content.
+
+Key features:
+- Certificate upload
+- UTF8 string and OID input
+- Zero-knowledge proof generation and verification
+
 ## Project Milestone
 
 1. **Phase-1** ASN.1 Parser
@@ -29,49 +63,6 @@ Some of ASN.1 DER types.
    - [2.5.4.6](http://oid-info.com/get/2.5.4.6) means countryName
    - [2.5.4.10](http://oid-info.com/get/2.5.4.10) means “organizationName
 5. Signature
-
-For Testing, I took two pdf i.e
-
-1. blank pdf
-2. blank pdf with digital signature (done with the help docuSign)
-
-Using online tools like [ASN.1 JavaScript decoder](https://lapo.it/asn1js/), I checked the information contained in them. Since blank.pdf doesn't have a digital signature, it doesn't contain any information to decode.
-
-However, by checking the DocuSigned PDF and exporting the `.cer` certificate in the `PKCS#7/CMS DER` format, I found these information
-check these link it will show the all information [asn1 link](https://lapo.it/asn1js/#MIIFwzCCBKugAwIBAgIQJobcP0b0cfqDrWZJYF_LbTANBgkqhkiG9w0BAQsFADCBtzELMAkGA1UEBhMCVVMxFjAUBgNVBAoTDUVudHJ1c3QsIEluYy4xKDAmBgNVBAsTH1NlZSB3d3cuZW50cnVzdC5uZXQvbGVnYWwtdGVybXMxOTA3BgNVBAsTMChjKSAyMDE1IEVudHJ1c3QsIEluYy4gLSBmb3IgYXV0aG9yaXplZCB1c2Ugb25seTErMCkGA1UEAxMiRW50cnVzdCBDbGFzcyAzIENsaWVudCBDQSAtIFNIQTI1NjAeFw0yMzEwMjYxNzE2MzZaFw0yNTEwMjYxNzE2MzRaMIG6MQswCQYDVQQGEwJVUzETMBEGA1UECBMKQ2FsaWZvcm5pYTEWMBQGA1UEBxMNU2FuIEZyYW5jaXNjbzEXMBUGA1UEChMORG9jdVNpZ24sIEluYy4xHTAbBgNVBAsTFFRlY2huaWNhbCBPcGVyYXRpb25zMRcwFQYDVQQDEw5Eb2N1U2lnbiwgSW5jLjEtMCsGCSqGSIb3DQEJARYeZW50ZXJwcmlzZXN1cHBvcnRAZG9jdXNpZ24uY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAowpIXhmV0SDi9ZnQL97zqL70RNhT3NAN1dcOQ4C0msQoayUpET4fjXVmiK2EDy3PzXSvx86FEpus_z-_fZ0C-ZsLNx_ETwJolGvLFGbG10k92EAG9ARToBDhJhkGIXuWU-jzTUrEQjJz4AdRgujWbiDNHqJXkBbkv6PY5w8lOlRh8khoCtys-TsiKxmAeC4ipgflOUK8TDxqgbAvtwt5j_JLQfCc_wxABas1hYR6_rg1q8_iukKHcRcvp1FMFFWtNZ8w6k3wLPwoCYZ1JSRdaHIbjNdmslrSlRZ_SpifGSl0HQGdS6_OHtuP0mT3Oyl5pNTJcRIU0xcaBasVLr4RLQIDAQABo4IBxDCCAcAwDAYDVR0TAQH_BAIwADAdBgNVHQ4EFgQUBC3YVHzRCu4skFnR09xJ-Qm8G7UwHwYDVR0jBBgwFoAUBp9vTqIpTg8Mrhe_tphG7624O3IwZwYIKwYBBQUHAQEEWzBZMCMGCCsGAQUFBzABhhdodHRwOi8vb2NzcC5lbnRydXN0Lm5ldDAyBggrBgEFBQcwAoYmaHR0cDovL2FpYS5lbnRydXN0Lm5ldC9jbGFzczMtMjA0OC5jZXIwNwYDVR0fBDAwLjAsoCqgKIYmaHR0cDovL2NybC5lbnRydXN0Lm5ldC9jbGFzczMtc2hhMi5jcmwwDgYDVR0PAQH_BAQDAgbAMCAGA1UdJQQZMBcGCWCGSAGG-msoCwYKKwYBBAGCNwoDDDBDBgoqhkiG9y8BAQkBBDUwMwIBAYYuaHR0cDovL3RpbWVzdGFtcC5lbnRydXN0Lm5ldC9UU1MvUkZDMzE2MXNoYTJUUzATBgoqhkiG9y8BAQkCBAUwAwIBATBCBgNVHSAEOzA5MDcGCmCGSAGG-mwKAQYwKTAnBggrBgEFBQcCARYbaHR0cHM6Ly93d3cuZW50cnVzdC5uZXQvcnBhMA0GCSqGSIb3DQEBCwUAA4IBAQBUzroho_W0sJhpReZrGKnhi61MNFOBaPqxI_FtqHNnP0afbPs7X_XVcOYExQUh0VbrghqXx_K-7ptw-6CnzIwEHZY8HKOOyH_EHRRUKb1IpEQMuWbAjB4j2ZNgwb6BNHHptDESMOOPBERLUiqxpNRTf_mvzj6xkByLfQnvTv492xu18r-rKAxY_aNM_2lQZ09caWjec64rBEUCjfr4h2o7oolOEhQAW7SHCydLVJMjHm1sst8wyv2G7KQFneI4k8XlXvnWm7uIUmLaDbtCCN538yhZT07znGHyCuvCk9DygMAI5HfJ4Uo9h8NqLTUyGJiF7NzyXW2Wddr6sZpjie5-)
-
-Here are some important information we can extract:
-
-- Issuer Name (blank in DocuSigned)
-- Country Information
-- Locality Information
-- Signature Algorithm
-- Signature
-
-Since the DocuSign document provides only basic information, we can build a generic DER or BER parser that takes data from a `.cer` file and outputs all important information.
-
-To create a new certificate signing request (CSR) using OpenSSL and generate a `.cer` file:
-
-```json
-$ openssl req -new -key private.key -out new.cer
-```
-
-So, I have created a new Certificate Signing Request (CSR) using OpenSSL and generate a `.cer` file, you need to provide various pieces of information. This information is then stored in the DER structure of the `.cer` file. The details include:
-
-- Country Name
-- State or Province Name
-- Locality Name
-- Organisation Name
-- Organisation al Unit Name
-- Common Name
-- Email Address
-- Date
-
-**We can later extract this information in Circom circuits.**
-
-![asn-decode-online](https://hackmd.io/_uploads/H1TIBe_8R.png)
-
----
 
 ## Algorithm for ASN.1 Parser
 
@@ -500,8 +491,9 @@ After processing these 5 elements, the ASN_ARRAY would look like this:
 we can look at first bytes of each array and determine its tag class and decode according to get value.
 
 ### Reference
-
-- Understanding PDF Parsing
-  https://letsencrypt.org/docs/a-warm-welcome-to-asn1-and-der/#:~:text=The Encoding-,ASN.,to express a given structure.
 - https://datatracker.ietf.org/doc/html/rfc5280#page-96
 - https://lapo.it/asn1js/
+
+### Credits
+A huge thank you to @lapo-luchini for creating the ASN.1 JavaScript decoder. This tool [ASN.1 JavaScript decoder](https://lapo.it/asn1js/) has been an invaluable reference for our project. 
+
