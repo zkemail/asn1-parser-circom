@@ -3,9 +3,9 @@ import Vkey from "../assets/groth16_vkey.json";
 
 // ? need to change once repo is open source
 export const wasm_path =
-  "https://raw.githubusercontent.com/0xVikasRushi/zk-proof-of-age/main/backend/circuits/utf8prover.wasm";
+  "https://raw.githubusercontent.com/0xVikasRushi/asn1-parser-circom/main/app/src/assets/utf8prover.wasm";
 export const zkey_path =
-  "https://raw.githubusercontent.com/0xVikasRushi/zk-proof-of-age/main/backend/circuits/utf8prover.zkey";
+  "https://raw.githubusercontent.com/0xVikasRushi/asn1-parser-circom/main/app/src/assets/utf8prover.zkey";
 export const vkey_path = Vkey;
 
 export const OPTIONS = ["DER", "BER", "X.509"];
