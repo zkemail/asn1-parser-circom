@@ -30,7 +30,7 @@ export class Certificate {
 
 export function readAndParseDer(derName: string): Uint8Array {
   try {
-    const der = fs.readFileSync(`./samples/der/${derName}`, "utf-8");
+    const der = fs.readFileSync(`./samples/${derName}`, "utf-8");
     return Certificate.decode(der);
   } catch (error) {
     throw new Error("Failed in parsing Certificate");

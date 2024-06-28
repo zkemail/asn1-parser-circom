@@ -15,7 +15,7 @@ import {
 } from "../../src/constant";
 import { CircuitName, CompileCircuit } from "../../src/utils";
 import { circomkit } from "../common";
-import { getOIDLength } from "../../src/parser-utils";
+import { ASN } from "../../src/parser";
 
 describe("DecodeLength", () => {
   let circuit: WitnessTester<["in"], ["out"]>;
@@ -115,7 +115,7 @@ describe("ObjectIdentifierParser", () => {
   it("It Should take decode oid (1.2.840.113549.1.9.15)", async () => {
     let input = [0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x01, 0x09, 0x0f];
     let N = input.length;
-    let M = getOIDLength(Uint8Array.from(input));
+    let M = ASN.getOIDLength(Uint8Array.from(input));
 
     circuit = await CompileCircuit(CircuitName.ObjectIdentifierParser, [N, M]);
     await circuit.expectPass({ in: input }, { out: [1, 2, 840, 113549, 1, 9, 15] });
@@ -124,7 +124,7 @@ describe("ObjectIdentifierParser", () => {
   it("It Should take decode oid (1.2.840.113549.1.7.2)", async () => {
     let input = [0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x01, 0x07, 0x02];
     let N = input.length;
-    let M = getOIDLength(Uint8Array.from(input));
+    let M = ASN.getOIDLength(Uint8Array.from(input));
 
     circuit = await CompileCircuit(CircuitName.ObjectIdentifierParser, [N, M]);
     await circuit.expectPass({ in: input }, { out: [1, 2, 840, 113549, 1, 7, 2] });
@@ -133,7 +133,7 @@ describe("ObjectIdentifierParser", () => {
   it("It Should take decode oid (1.2.840.10045.4.3.2)", async () => {
     let input = [0x2a, 0x86, 0x48, 0xce, 0x3d, 0x04, 0x03, 0x02];
     let N = input.length;
-    let M = getOIDLength(Uint8Array.from(input));
+    let M = ASN.getOIDLength(Uint8Array.from(input));
 
     circuit = await CompileCircuit(CircuitName.ObjectIdentifierParser, [N, M]);
     await circuit.expectPass({ in: input }, { out: [1, 2, 840, 10045, 4, 3, 2] });
@@ -142,7 +142,7 @@ describe("ObjectIdentifierParser", () => {
   it("It Should take decode oid (2.16.840.1.101.3.4.1.42)", async () => {
     let input = [0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x01, 0x2a];
     let N = input.length;
-    let M = getOIDLength(Uint8Array.from(input));
+    let M = ASN.getOIDLength(Uint8Array.from(input));
 
     circuit = await CompileCircuit(CircuitName.ObjectIdentifierParser, [N, M]);
     await circuit.expectPass({ in: input }, { out: [2, 16, 840, 1, 101, 3, 4, 1, 42] });
@@ -150,7 +150,7 @@ describe("ObjectIdentifierParser", () => {
   it("It Should take decode oid (2.5.4.3)", async () => {
     let input = [0x55, 0x04, 0x03];
     let N = input.length;
-    let M = getOIDLength(Uint8Array.from(input));
+    let M = ASN.getOIDLength(Uint8Array.from(input));
 
     circuit = await CompileCircuit(CircuitName.ObjectIdentifierParser, [N, M]);
     await circuit.expectPass({ in: input }, { out: [2, 5, 4, 3] });

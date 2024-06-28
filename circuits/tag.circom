@@ -1,6 +1,5 @@
 pragma circom 2.0.0;
 
-// include "@zk-email/circuits/utils/array.circom";
 
 template TagDecoder() {
     signal input n;
