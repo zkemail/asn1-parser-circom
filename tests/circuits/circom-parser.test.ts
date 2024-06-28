@@ -2,14 +2,18 @@ import { WitnessTester } from "circomkit";
 import {
   MAX_INPUT_LENGTH,
   MAX_OID_OUTPUT_LENGTH,
+  MAX_UTC_TIME_LENGTH,
   MAX_UTF8_OUTPUT_LENGTH,
   SAMPLE_BER,
   SAMPLE_BER_EXPECTED_0ID,
   SAMPLE_BER_EXPECTED_STRING,
+  SAMPLE_BER_EXPECTED_UTC,
   SAMPLE_DER,
   SAMPLE_DER_EXPECTED_OID,
   SAMPLE_DER_EXPECTED_STRING,
+  SAMPLE_DER_EXPECTED_UTC,
   SAMPLE_X509_EXPECTED_STRING,
+  SAMPLE_X509_EXPECTED_UTC,
   SAMPLE_X_509,
   SAMPLE_X_509_EXPECTED_OID,
 } from "../../src/constant";
@@ -158,14 +162,14 @@ describe("ObjectIdentifierParser", () => {
 });
 
 describe("Circom Parser", () => {
-  it("It Should take calculate length of der oids & string array", async () => {
+  it("It Should take calculate length of der oids , string array, data array", async () => {
     const N = SAMPLE_DER.length;
     let circuit = await CompileCircuit(CircuitName.AsnLength, [N]);
 
     await circuit.calculateWitness({ in: SAMPLE_DER });
     await circuit.expectPass(
       { in: SAMPLE_DER },
-      { out: [SAMPLE_DER_EXPECTED_OID.length, SAMPLE_DER_EXPECTED_STRING.length] }
+      { out: [SAMPLE_DER_EXPECTED_OID.length, SAMPLE_DER_EXPECTED_STRING.length, SAMPLE_DER_EXPECTED_UTC.length] }
     );
   });
 
@@ -176,7 +180,7 @@ describe("Circom Parser", () => {
     await circuit.calculateWitness({ in: SAMPLE_BER });
     await circuit.expectPass(
       { in: SAMPLE_BER },
-      { out: [SAMPLE_BER_EXPECTED_0ID.length, SAMPLE_BER_EXPECTED_STRING.length] }
+      { out: [SAMPLE_BER_EXPECTED_0ID.length, SAMPLE_BER_EXPECTED_STRING.length, SAMPLE_BER_EXPECTED_UTC.length] }
     );
   });
 
@@ -187,27 +191,30 @@ describe("Circom Parser", () => {
     await circuit.calculateWitness({ in: SAMPLE_X_509 });
     await circuit.expectPass(
       { in: SAMPLE_X_509 },
-      { out: [SAMPLE_X_509_EXPECTED_OID.length, SAMPLE_X509_EXPECTED_STRING.length] }
+      { out: [SAMPLE_X_509_EXPECTED_OID.length, SAMPLE_X509_EXPECTED_STRING.length, SAMPLE_X509_EXPECTED_UTC.length] }
     );
   });
 });
 
 describe("Circom Parser Range Circuit", () => {
-  let circuit: WitnessTester<["in", "actualLength", "actualLengthOfOid", "actualLengthOfString"], ["out"]>;
+  let circuit: WitnessTester<
+    ["in", "actualLength", "actualLengthOfOid", "actualLengthOfString", "actualLengthOfUTC"],
+    ["out"]
+  >;
   const N = MAX_INPUT_LENGTH;
-  const lengthOfOID = 44;
-  const lengthOfString = 4;
-
+  const lengthOfOID = SAMPLE_DER_EXPECTED_OID.length;
+  const lengthOfString = SAMPLE_DER_EXPECTED_STRING.length;
+  const lengthOfUtc = SAMPLE_DER_EXPECTED_UTC.length;
   const input = SAMPLE_DER;
   const inputWithPaddingZero = input.concat(Array(N - input.length).fill(0));
 
   before(async () => {
     circuit = await circomkit.WitnessTester(
-      `AsnStartAndEndIndex_${N}_${MAX_OID_OUTPUT_LENGTH}_${MAX_UTF8_OUTPUT_LENGTH}`,
+      `AsnStartAndEndIndex_${N}_${MAX_OID_OUTPUT_LENGTH}_${MAX_UTF8_OUTPUT_LENGTH}_${MAX_UTC_TIME_LENGTH}`,
       {
         file: "parser",
         template: "AsnStartAndEndIndex",
-        params: [N, MAX_OID_OUTPUT_LENGTH, MAX_UTF8_OUTPUT_LENGTH],
+        params: [N, MAX_OID_OUTPUT_LENGTH, MAX_UTF8_OUTPUT_LENGTH, MAX_UTC_TIME_LENGTH],
       }
     );
   });
@@ -217,26 +224,30 @@ describe("Circom Parser Range Circuit", () => {
       actualLength: SAMPLE_DER.length,
       actualLengthOfOid: lengthOfOID,
       actualLengthOfString: lengthOfString,
+      actualLengthOfUTC: lengthOfUtc,
     });
   });
 });
 
 describe("Circom Parser Range Circuit", () => {
-  let circuit: WitnessTester<["in", "actualLength", "actualLengthOfOid", "actualLengthOfString"], ["out"]>;
+  let circuit: WitnessTester<
+    ["in", "actualLength", "actualLengthOfOid", "actualLengthOfString", "actualLengthOfUTC"],
+    ["out"]
+  >;
   const N = MAX_INPUT_LENGTH;
   const lengthOfOID = SAMPLE_BER_EXPECTED_0ID.length;
   const lengthOfString = SAMPLE_BER_EXPECTED_STRING.length;
-
+  const lengthOfUTC = SAMPLE_BER_EXPECTED_UTC.length;
   const input = SAMPLE_BER;
   const inputWithPaddingZero = input.concat(Array(N - input.length).fill(0));
 
   before(async () => {
     circuit = await circomkit.WitnessTester(
-      `AsnStartAndEndIndex_${N}_${MAX_OID_OUTPUT_LENGTH}_${MAX_UTF8_OUTPUT_LENGTH}`,
+      `AsnStartAndEndIndex_${N}_${MAX_OID_OUTPUT_LENGTH}_${MAX_UTF8_OUTPUT_LENGTH}_${MAX_UTC_TIME_LENGTH}`,
       {
         file: "parser",
         template: "AsnStartAndEndIndex",
-        params: [N, MAX_OID_OUTPUT_LENGTH, MAX_UTF8_OUTPUT_LENGTH],
+        params: [N, MAX_OID_OUTPUT_LENGTH, MAX_UTF8_OUTPUT_LENGTH, MAX_UTC_TIME_LENGTH],
       }
     );
   });
@@ -246,6 +257,7 @@ describe("Circom Parser Range Circuit", () => {
       actualLength: SAMPLE_BER.length,
       actualLengthOfOid: lengthOfOID,
       actualLengthOfString: lengthOfString,
+      actualLengthOfUTC: lengthOfUTC,
     });
   });
 });

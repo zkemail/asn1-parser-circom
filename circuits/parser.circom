@@ -10,59 +10,64 @@ template AsnParser(N, lengthOfOid, lengthOfUtf8) {
     signal output OID[lengthOfOid];
     signal output UTF8[lengthOfUtf8];   
 
-    component asnStartAndEndIndex =  AsnStartAndEndIndex(N,lengthOfOid,lengthOfUtf8);
-    asnStartAndEndIndex.in <== in;
+    // component asnStartAndEndIndex =  AsnStartAndEndIndex(N,lengthOfOid,lengthOfUtf8);
+    // asnStartAndEndIndex.in <== in;
 
-    signal outRangeForOID[lengthOfOid][2] <== asnStartAndEndIndex.outRangeForOID;
-    signal outRangeForUTF8[lengthOfUtf8][2] <== asnStartAndEndIndex.outRangeForUTF8;
+    // signal outRangeForOID[lengthOfOid][2] <== asnStartAndEndIndex.outRangeForOID;
+    // signal outRangeForUTF8[lengthOfUtf8][2] <== asnStartAndEndIndex.outRangeForUTF8;
 
     // ? outRangeForOID  Contains all start,End Index 
     // ? outRangeForUTF8 Contains all utf8 start,endIndex
 }
 
-template AsnStartAndEndIndex(maxLength, maxlengthOfOid, maxlengthOfString) {
+template AsnStartAndEndIndex(maxLength, maxlengthOfOid, maxlengthOfString, maxlengthOfUtc) {
     signal input  in[maxLength];
     signal input  actualLength;
     signal input  actualLengthOfOid;
     signal input  actualLengthOfString;
+    signal input  actualLengthOfUTC;
 
 
     signal output outRangeForOID[maxlengthOfOid][2];
     signal output outRangeForUTF8[maxlengthOfString][2];
+    signal output outRangeForUTC[maxlengthOfUtc][2];
 
 
-    var SEQUENCE           =  0x30;
-    var SET                =  0x31;
-    var CONTEXT_SPECIFIC_0 =  0xa0;
-    var CONTEXT_SPECIFIC_1 =  0xa1;
-    var CONTEXT_SPECIFIC_3 =  0xa3;
-    var CONTEXT_SPECIFIC_4 =  0xa4;
-    var OCTET_STRING       =  0x04;
-    var OBJECT_IDENTIFIER  =  0x06;
-    var UTF8_STRING        =  0x0c;
+    var SEQUENCE           =  tag_class_sequence();
+    var SET                =  tag_class_set();
+    var CONTEXT_SPECIFIC_0 =  tag_context_specific_zero();
+    var CONTEXT_SPECIFIC_1 =  tag_context_specific_one();
+    var CONTEXT_SPECIFIC_3 =  tag_context_specific_three();
+    var CONTEXT_SPECIFIC_4 =  tag_context_specific_four();
+    var OCTET_STRING       =  tag_octet_string();
+    var OBJECT_IDENTIFIER  =  tag_class_object_identifier();
+    var UTF8_STRING        =  tag_utf8_string();
+    var UTC_TIME           =  tag_class_utc_time();
 
+    var i = 0;
 
-     var i = 0;
-
-     var  num_of_oids = 0;
-     var  num_of_utf8 = 0;
+    var  num_of_oids = 0;
+    var  num_of_utf8 = 0;
+    var  num_of_utc_time = 0;
 
     var startIndicesOids[maxlengthOfOid];
     var endIndicesOids[maxlengthOfOid];
     var startIndicesUTF8[maxlengthOfString];
     var endIndicesUTF8[maxlengthOfString];
+    var startIndicesUTC[maxlengthOfUtc];
+    var endIndicesUTC[maxlengthOfUtc];
 
      while (i < actualLength - 1){
       var ASN_TAG = in[i];
       var ASN_LENGTH = in[i + 1];
 
       if (
-      ASN_TAG == SEQUENCE || 
-      ASN_TAG == SET ||
-      ASN_TAG == CONTEXT_SPECIFIC_0 ||
-      ASN_TAG ==  CONTEXT_SPECIFIC_1 || 
-      ASN_TAG ==  CONTEXT_SPECIFIC_3 || 
-      ASN_TAG ==  CONTEXT_SPECIFIC_4
+        ASN_TAG == SEQUENCE || 
+        ASN_TAG == SET ||
+        ASN_TAG == CONTEXT_SPECIFIC_0 ||
+        ASN_TAG ==  CONTEXT_SPECIFIC_1 || 
+        ASN_TAG ==  CONTEXT_SPECIFIC_3 || 
+        ASN_TAG ==  CONTEXT_SPECIFIC_4
       ){
           var isLongForm = (ASN_LENGTH & 0x80) == 0 ? 0 : 1;
           if (isLongForm == 1){
@@ -109,6 +114,11 @@ template AsnStartAndEndIndex(maxLength, maxlengthOfOid, maxlengthOfString) {
                     endIndicesUTF8[num_of_utf8]   = endIndex;
                     num_of_utf8++;
                 }
+                if (ASN_TAG == UTC_TIME){
+                    startIndicesUTC[num_of_utc_time] =  startIndex;
+                    endIndicesUTC[num_of_utc_time]   = endIndex;
+                    num_of_utc_time++;
+                }
         }
     }
 
@@ -122,28 +132,37 @@ template AsnStartAndEndIndex(maxLength, maxlengthOfOid, maxlengthOfString) {
         outRangeForUTF8[l][0] <-- startIndicesUTF8[l];
         outRangeForUTF8[l][1] <-- endIndicesUTF8[l];
     }
+
+    for(var m = 0; m < maxlengthOfUtc ;m++) {
+        outRangeForUTC[m][0] <-- startIndicesUTC[m];
+        outRangeForUTC[m][1] <-- endIndicesUTC[m];
+    }
 }
 
 template AsnLength(N) {
     signal input in[N];
     // out[0] length of oid array
     // out[1] length of utf8 array
-    signal output out[2];  
+    // out[2] length of time (utcTime)
+    signal output out[4];  
     
-    var SEQUENCE           =  0x30;
-    var SET                =  0x31;
-    var CONTEXT_SPECIFIC_0 =  0xa0;
-    var CONTEXT_SPECIFIC_1 =  0xa1;
-    var CONTEXT_SPECIFIC_3 =  0xa3;
-    var CONTEXT_SPECIFIC_4 =  0xa4;
-    var OCTET_STRING       =  0x04;
-    var OBJECT_IDENTIFIER  =  0x06;
-    var UTF8_STRING        =  0x0c;
+    var SEQUENCE           =  tag_class_sequence();
+    var SET                =  tag_class_set();
+    var CONTEXT_SPECIFIC_0 =  tag_context_specific_zero();
+    var CONTEXT_SPECIFIC_1 =  tag_context_specific_one();
+    var CONTEXT_SPECIFIC_3 =  tag_context_specific_three();
+    var CONTEXT_SPECIFIC_4 =  tag_context_specific_four();
+    var OCTET_STRING       =  tag_octet_string();
+    var OBJECT_IDENTIFIER  =  tag_class_object_identifier();
+    var UTF8_STRING        =  tag_utf8_string();
+    var UTC_TIME           =  tag_class_utc_time();
 
     var num_of_oids = 0;
     var num_of_utf8 = 0;
+    var num_of_utc_time = 0;
     var i = 0;
 
+    
     while (i < N - 1){
       var ASN_TAG = in[i];
       var ASN_LENGTH = in[i + 1];
@@ -188,10 +207,14 @@ template AsnLength(N) {
         }
         else {
           if (ASN_TAG ==  OBJECT_IDENTIFIER){
+            // utf8Contraint.in <-- ASN_TAG;
             num_of_oids++;
           }
           if (ASN_TAG ==  UTF8_STRING){
             num_of_utf8++;
+          }
+          if (ASN_TAG == UTC_TIME){
+            num_of_utc_time++;
           }
           var startIndex = i;
           var endIndex = startIndex + ASN_LENGTH + 2;
@@ -200,6 +223,7 @@ template AsnLength(N) {
     }
     out[0] <-- num_of_oids;
     out[1] <-- num_of_utf8;
+    out[2] <-- num_of_utc_time;
 }
  
 

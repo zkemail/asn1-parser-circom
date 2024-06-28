@@ -40,7 +40,7 @@ describe("TagClass", async () => {
       file: "tag_class",
       template: "SequenceConstraint",
     });
-    await circuit.expectPass({ in: 0x10 });
+    await circuit.expectPass({ in: 0x30 });
   });
 
   it("should satisfy UTCTimeConstraint", async () => {

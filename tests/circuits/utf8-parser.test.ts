@@ -4,10 +4,12 @@ import {
   MAX_ACTUAL_STATE_NAME_LEN,
   MAX_INPUT_LENGTH,
   MAX_OID_OUTPUT_LENGTH,
+  MAX_UTC_TIME_LENGTH,
   MAX_UTF8_OUTPUT_LENGTH,
   SAMPLE_BER,
   SAMPLE_BER_EXPECTED_0ID,
   SAMPLE_BER_EXPECTED_STRING,
+  SAMPLE_BER_EXPECTED_UTC,
   SAMPLE_DER,
   SAMPLE_X_509,
 } from "../../src/constant";
@@ -16,20 +18,21 @@ import { circomkit } from "../common";
 const maxLength = MAX_INPUT_LENGTH;
 const maxStateNameLen = MAX_ACTUAL_STATE_NAME_LEN;
 const maxOidLen = MAX_ACTUAL_OID_LENGTH;
+const maxUTCLen = MAX_UTC_TIME_LENGTH;
 
 const maxLengthOfOid = MAX_OID_OUTPUT_LENGTH;
 const maxLengthOfUtf8 = MAX_UTF8_OUTPUT_LENGTH;
 
 describe("UTF8-PARSER TEST", () => {
   let circuit: WitnessTester<
-    ["in", "oid", "stateName", "actualLength", "stateNameLen", "oidLen", "lengthOfOid", "lengthOfUtf8"],
+    ["in", "oid", "stateName", "actualLength", "stateNameLen", "oidLen", "lengthOfOid", "lengthOfUtf8", "lengthOfUtc"],
     ["out"]
   >;
   before(async () => {
     circuit = await circomkit.WitnessTester("UTF8StringProver", {
       file: "utf8-parser",
       template: "UTF8StringProver",
-      params: [maxLength, maxStateNameLen, maxOidLen, maxLengthOfOid, maxLengthOfUtf8],
+      params: [maxLength, maxStateNameLen, maxOidLen, maxLengthOfOid, maxLengthOfUtf8, maxUTCLen],
     });
   });
   describe("UTF8StringProver X_509", () => {
@@ -54,6 +57,7 @@ describe("UTF8-PARSER TEST", () => {
         oidLen: oid.length,
         lengthOfOid: SAMPLE_BER_EXPECTED_0ID.length,
         lengthOfUtf8: SAMPLE_BER_EXPECTED_STRING.length,
+        lengthOfUtc: SAMPLE_BER_EXPECTED_UTC.length,
       });
     });
 
@@ -73,6 +77,7 @@ describe("UTF8-PARSER TEST", () => {
         oidLen: oid.length,
         lengthOfOid: SAMPLE_BER_EXPECTED_0ID.length,
         lengthOfUtf8: SAMPLE_BER_EXPECTED_STRING.length,
+        lengthOfUtc: SAMPLE_BER_EXPECTED_UTC.length,
       });
     });
 
@@ -92,6 +97,7 @@ describe("UTF8-PARSER TEST", () => {
         oidLen: oid.length,
         lengthOfOid: SAMPLE_BER_EXPECTED_0ID.length,
         lengthOfUtf8: SAMPLE_BER_EXPECTED_STRING.length,
+        lengthOfUtc: SAMPLE_BER_EXPECTED_UTC.length,
       });
     });
     it("It Should fail at wrong utf8", async () => {
@@ -110,6 +116,7 @@ describe("UTF8-PARSER TEST", () => {
         oidLen: oid.length,
         lengthOfOid: SAMPLE_BER_EXPECTED_0ID.length,
         lengthOfUtf8: SAMPLE_BER_EXPECTED_STRING.length,
+        lengthOfUtc: SAMPLE_BER_EXPECTED_UTC.length,
       });
     });
 
@@ -129,6 +136,7 @@ describe("UTF8-PARSER TEST", () => {
         oidLen: oid.length,
         lengthOfOid: SAMPLE_BER_EXPECTED_0ID.length,
         lengthOfUtf8: SAMPLE_BER_EXPECTED_STRING.length,
+        lengthOfUtc: SAMPLE_BER_EXPECTED_UTC.length,
       });
     });
   });
@@ -155,6 +163,7 @@ describe("UTF8-PARSER TEST", () => {
         oidLen: oid.length,
         lengthOfOid: SAMPLE_BER_EXPECTED_0ID.length,
         lengthOfUtf8: SAMPLE_BER_EXPECTED_STRING.length,
+        lengthOfUtc: SAMPLE_BER_EXPECTED_UTC.length,
       });
     });
   });
@@ -180,6 +189,7 @@ describe("UTF8-PARSER TEST", () => {
         oidLen: oid.length,
         lengthOfOid: SAMPLE_BER_EXPECTED_0ID.length,
         lengthOfUtf8: SAMPLE_BER_EXPECTED_STRING.length,
+        lengthOfUtc: SAMPLE_BER_EXPECTED_UTC.length,
       });
     });
   });

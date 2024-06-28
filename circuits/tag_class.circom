@@ -9,7 +9,7 @@ template BooleanConstraint() {
 
 template OctectStringConstraint() { 
     signal input in;
-    in ===  tag_class_octet_string();
+    in ===  tag_octet_string();
 }
 
 template ObjectIdentiferConstraint() { 
@@ -24,12 +24,12 @@ template SequenceConstraint() {
 
 template UTCTimeConstraint() {
     signal input in;
-    in ===  tag_class_utc_time();
+    in ===   tag_class_utc_time();
 }
 
 template UTF8StringConstraint() {
     signal input in;
-    in ===  tag_class_utf8_string();
+    in ===   tag_utf8_string();
 }
 
 template BITStringConstraint() {

@@ -3,6 +3,8 @@ pragma circom 2.0.0;
 include "./parser.circom";
 include "circomlib/circuits/comparators.circom";
 
+
+// * TODO TO CHANGE DOCS
 /**
  * @title UTF8StringProver
  * @dev This circuit allows you to prove that you have an object identifier with a UTF8 string.
@@ -13,7 +15,7 @@ include "circomlib/circuits/comparators.circom";
  * @param lengthOfUtf8 The number of UTF8 segments
  */
  
-template UTF8StringProver(maxLength, maxStateNameLen, maxOidLen, maxLengthOfOid, maxLengthOfUtf8) { 
+template UTF8StringProver(maxLength, maxStateNameLen, maxOidLen, maxLengthOfOid, maxLengthOfUtf8, maxlengthOfUtc) { 
     signal input in[maxLength];
     signal input oid[maxOidLen]; 
     signal input stateName[maxStateNameLen]; 
@@ -25,14 +27,16 @@ template UTF8StringProver(maxLength, maxStateNameLen, maxOidLen, maxLengthOfOid,
 
     signal input lengthOfOid;
     signal input lengthOfUtf8;
+    signal input lengthOfUtc;
 
     signal output out;
 
-    component asnStartAndEndIndex = AsnStartAndEndIndex(maxLength, maxLengthOfOid, maxLengthOfUtf8);
+    component asnStartAndEndIndex = AsnStartAndEndIndex(maxLength, maxLengthOfOid, maxLengthOfUtf8, maxlengthOfUtc);
     asnStartAndEndIndex.in <== in;
     asnStartAndEndIndex.actualLength <== actualLength;
     asnStartAndEndIndex.actualLengthOfOid <== lengthOfOid;
     asnStartAndEndIndex.actualLengthOfString <== lengthOfUtf8;
+    asnStartAndEndIndex.actualLengthOfUTC <== lengthOfUtc;
 
     signal outRangeForOID[maxLengthOfOid][2] <== asnStartAndEndIndex.outRangeForOID;
     signal outRangeForUTF8[maxLengthOfUtf8][2] <== asnStartAndEndIndex.outRangeForUTF8;
