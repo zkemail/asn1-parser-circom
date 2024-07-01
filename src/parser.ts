@@ -70,6 +70,7 @@ export class ASN {
   static decode(asn1: number[][]) {
     const oidArray: string[] = [];
     const utf8Array: string[] = [];
+    const utcArray: string[] = [];
     asn1.forEach((e) => {
       if (e[0] === 0x06) {
         oidArray.push(this.parseOid(e));
@@ -77,12 +78,39 @@ export class ASN {
       if (e[0] == 0x0c) {
         utf8Array.push(this.parseUTFString(e));
       }
-      // if (e[0] == 0x04) {
-      //   // TODO OCTECT PARSING
-      //   console.log(parseUTFString(e));
-      // }
+      if (e[0] == 0x17) {
+        utcArray.push(this.parseUTCString(e));
+      }
     });
-    return { OID: oidArray, UTF8Array: utf8Array };
+    return { OID: oidArray, UTF8Array: utf8Array, UTCString: utcArray };
+  }
+
+  static parseUTCString(bytes: number[] | Uint8Array): string {
+    if (bytes.length < 15) {
+      throw new Error("Invalid byte length for UTC time");
+    }
+
+    const timeBytes = bytes.slice(2);
+    const timeString = String.fromCharCode(...timeBytes);
+
+    const year = parseInt(timeString.slice(0, 2));
+    const month = parseInt(timeString.slice(2, 4)) - 1;
+    const day = parseInt(timeString.slice(4, 6));
+    const hour = parseInt(timeString.slice(6, 8));
+    const minute = parseInt(timeString.slice(8, 10));
+    const second = parseInt(timeString.slice(10, 12));
+
+    const fullYear = year >= 50 ? 1900 + year : 2000 + year;
+    const date = new Date(Date.UTC(fullYear, month, day, hour, minute, second));
+    return date.toUTCString();
+  }
+
+  static stringToDate(dateString: string): Date {
+    const [datePart, timePart] = dateString.split(" ");
+    const [year, month, day] = datePart.split("-").map(Number);
+    const [hour, minute, second] = timePart.split(":").map(Number);
+
+    return new Date(year, month - 1, day, hour, minute, second);
   }
 
   static getOIDLength(bytes: Uint8Array) {
