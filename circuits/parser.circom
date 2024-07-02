@@ -20,17 +20,21 @@ template AsnParser(N, lengthOfOid, lengthOfUtf8) {
     // ? outRangeForUTF8 Contains all utf8 start,endIndex
 }
 
-template AsnStartAndEndIndex(maxLength, maxlengthOfOid, maxlengthOfString, maxlengthOfUtc) {
+template AsnStartAndEndIndex(maxLength, maxlengthOfOid, maxlengthOfString, maxlengthOfUtc, maxlengthOfOctetString, maxlengthOfBitString) {
     signal input  in[maxLength];
     signal input  actualLength;
     signal input  actualLengthOfOid;
     signal input  actualLengthOfString;
     signal input  actualLengthOfUTC;
+    signal input  actualLengthOfOctetString;
+    signal input  actualLengthOfBitString;
 
 
     signal output outRangeForOID[maxlengthOfOid][2];
     signal output outRangeForUTF8[maxlengthOfString][2];
     signal output outRangeForUTC[maxlengthOfUtc][2];
+    signal output outRangeForBitString[maxlengthOfBitString][2];
+    signal output outRangeForOctetString[maxlengthOfOctetString][2]; 
 
 
     var SEQUENCE           =  tag_class_sequence();
@@ -43,19 +47,32 @@ template AsnStartAndEndIndex(maxLength, maxlengthOfOid, maxlengthOfString, maxle
     var OBJECT_IDENTIFIER  =  tag_class_object_identifier();
     var UTF8_STRING        =  tag_utf8_string();
     var UTC_TIME           =  tag_class_utc_time();
+    var BIT_STRING         =  tag_class_bit_string();
 
     var i = 0;
 
     var  num_of_oids = 0;
     var  num_of_utf8 = 0;
     var  num_of_utc_time = 0;
+    var  num_of_bit_string = 0;
+    var  num_of_octet_string = 0;
+
 
     var startIndicesOids[maxlengthOfOid];
     var endIndicesOids[maxlengthOfOid];
+    
     var startIndicesUTF8[maxlengthOfString];
     var endIndicesUTF8[maxlengthOfString];
+    
     var startIndicesUTC[maxlengthOfUtc];
     var endIndicesUTC[maxlengthOfUtc];
+
+    var startIndicesOctet[maxlengthOfOctetString];
+    var endIndicsOctet[maxlengthOfOctetString];
+
+    var startIndicesBit[maxlengthOfBitString];
+    var endIndicesBit[maxlengthOfBitString];
+
 
      while (i < actualLength - 1){
       var ASN_TAG = in[i];
@@ -79,6 +96,7 @@ template AsnStartAndEndIndex(maxLength, maxlengthOfOid, maxlengthOfString, maxle
           }
       }
         else if (ASN_TAG == OCTET_STRING){
+
              var isLongForm = (ASN_LENGTH & 0x80) == 0 ? 0 : 1;
              var length = 0;
                 if (isLongForm) {
@@ -93,10 +111,19 @@ template AsnStartAndEndIndex(maxLength, maxlengthOfOid, maxlengthOfString, maxle
                     var startIndex = i;
                     var endIndex = startIndex + length + temp + 2;
                     i = endIndex;
+
+                    startIndicesOctet[num_of_octet_string] =  startIndex;
+                    endIndicsOctet[num_of_octet_string] = endIndex;
+                    num_of_octet_string++;
+
                 } else{
                     var startIndex = i;
                     var endIndex = startIndex + ASN_LENGTH + 2;
                     i = endIndex;
+
+                    startIndicesOctet[num_of_octet_string] =  startIndex;
+                    endIndicsOctet[num_of_octet_string] = endIndex;
+                    num_of_octet_string++;
                 }
         }
         else {
@@ -119,6 +146,12 @@ template AsnStartAndEndIndex(maxLength, maxlengthOfOid, maxlengthOfString, maxle
                     endIndicesUTC[num_of_utc_time]   = endIndex;
                     num_of_utc_time++;
                 }
+
+                if (ASN_TAG == BIT_STRING) {
+                    startIndicesBit[num_of_bit_string] = startIndex;
+                    endIndicesBit[num_of_bit_string] = endIndex;
+                    num_of_bit_string++;  
+                }
         }
     }
 
@@ -137,6 +170,19 @@ template AsnStartAndEndIndex(maxLength, maxlengthOfOid, maxlengthOfString, maxle
         outRangeForUTC[m][0] <-- startIndicesUTC[m];
         outRangeForUTC[m][1] <-- endIndicesUTC[m];
     }
+
+    for(var n = 0; n < maxlengthOfOctetString ;n++) {
+        outRangeForOctetString[n][0] <-- startIndicesOctet[n];
+        outRangeForOctetString[n][1] <-- endIndicsOctet[n];
+    }
+
+
+    for(var n = 0; n < maxlengthOfBitString ;n++) {
+        outRangeForBitString[n][0] <-- startIndicesBit[n];
+        outRangeForBitString[n][1] <-- endIndicesBit[n];
+    }
+
+
 }
 
 template AsnLength(N) {

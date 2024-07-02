@@ -15,7 +15,7 @@ include "circomlib/circuits/comparators.circom";
  * @param lengthOfUtf8 The number of UTF8 segments
  */
  
-template UTF8StringProver(maxLength, maxStateNameLen, maxOidLen, maxLengthOfOid, maxLengthOfUtf8, maxlengthOfUtc) { 
+template UTF8StringProver (maxLength, maxStateNameLen, maxOidLen, maxLengthOfOid, maxLengthOfUtf8, maxlengthOfUtc, maxlengthOfOctetString, maxlengthOfBitString) { 
     signal input in[maxLength];
     signal input oid[maxOidLen]; 
     signal input stateName[maxStateNameLen]; 
@@ -28,15 +28,20 @@ template UTF8StringProver(maxLength, maxStateNameLen, maxOidLen, maxLengthOfOid,
     signal input lengthOfOid;
     signal input lengthOfUtf8;
     signal input lengthOfUtc;
+    signal input lengthOfOctet;
+    signal input lengthOfBit;
 
     signal output out;
 
-    component asnStartAndEndIndex = AsnStartAndEndIndex(maxLength, maxLengthOfOid, maxLengthOfUtf8, maxlengthOfUtc);
+    component asnStartAndEndIndex = AsnStartAndEndIndex(maxLength, maxLengthOfOid, maxLengthOfUtf8, maxlengthOfUtc, maxlengthOfOctetString, maxlengthOfBitString);
+
     asnStartAndEndIndex.in <== in;
     asnStartAndEndIndex.actualLength <== actualLength;
     asnStartAndEndIndex.actualLengthOfOid <== lengthOfOid;
     asnStartAndEndIndex.actualLengthOfString <== lengthOfUtf8;
     asnStartAndEndIndex.actualLengthOfUTC <== lengthOfUtc;
+    asnStartAndEndIndex.actualLengthOfOctetString <== lengthOfOctet;
+    asnStartAndEndIndex.actualLengthOfBitString <== lengthOfBit;
 
     signal outRangeForOID[maxLengthOfOid][2] <== asnStartAndEndIndex.outRangeForOID;
     signal outRangeForUTF8[maxLengthOfUtf8][2] <== asnStartAndEndIndex.outRangeForUTF8;

@@ -44,11 +44,14 @@ export const CompileCircuit = async (
         break;
 
       case CircuitName.ObjectIdentifierParser:
-        circuit = await circomkit.WitnessTester(`ObjectIdentifierParser_${paramsNumber[0]}_${paramsNumber[1]}`, {
-          file: "parser",
-          template: "ObjectIdentifierParser",
-          params: [...paramsNumber],
-        });
+        circuit = await circomkit.WitnessTester(
+          `ObjectIdentifierParser_${paramsNumber[0]}_${paramsNumber[1]}_${paramsNumber[2]}_${paramsNumber[3]}`,
+          {
+            file: "parser",
+            template: "ObjectIdentifierParser",
+            params: [...paramsNumber],
+          }
+        );
         break;
       default:
         throw new Error("Unknown Circuit");

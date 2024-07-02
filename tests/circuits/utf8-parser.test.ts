@@ -2,7 +2,9 @@ import { WitnessTester } from "circomkit";
 import {
   MAX_ACTUAL_OID_LENGTH,
   MAX_ACTUAL_STATE_NAME_LEN,
+  MAX_BIT_STRING_LENGTH,
   MAX_INPUT_LENGTH,
+  MAX_OCTET_STRING_LENGTH,
   MAX_OID_OUTPUT_LENGTH,
   MAX_UTC_TIME_LENGTH,
   MAX_UTF8_OUTPUT_LENGTH,
@@ -23,16 +25,40 @@ const maxUTCLen = MAX_UTC_TIME_LENGTH;
 const maxLengthOfOid = MAX_OID_OUTPUT_LENGTH;
 const maxLengthOfUtf8 = MAX_UTF8_OUTPUT_LENGTH;
 
+const maxLengthOfOctet = MAX_OCTET_STRING_LENGTH;
+const maxLengthofBit = MAX_BIT_STRING_LENGTH;
+
 describe("UTF8-PARSER TEST", () => {
   let circuit: WitnessTester<
-    ["in", "oid", "stateName", "actualLength", "stateNameLen", "oidLen", "lengthOfOid", "lengthOfUtf8", "lengthOfUtc"],
+    [
+      "in",
+      "oid",
+      "stateName",
+      "actualLength",
+      "stateNameLen",
+      "oidLen",
+      "lengthOfOid",
+      "lengthOfUtf8",
+      "lengthOfUtc",
+      "lengthOfOctet",
+      "lengthOfBit"
+    ],
     ["out"]
   >;
   before(async () => {
     circuit = await circomkit.WitnessTester("UTF8StringProver", {
       file: "utf8-parser",
       template: "UTF8StringProver",
-      params: [maxLength, maxStateNameLen, maxOidLen, maxLengthOfOid, maxLengthOfUtf8, maxUTCLen],
+      params: [
+        maxLength,
+        maxStateNameLen,
+        maxOidLen,
+        maxLengthOfOid,
+        maxLengthOfUtf8,
+        maxUTCLen,
+        maxLengthOfOctet,
+        maxLengthofBit,
+      ],
     });
   });
   describe("UTF8StringProver X_509", () => {
@@ -58,6 +84,8 @@ describe("UTF8-PARSER TEST", () => {
         lengthOfOid: SAMPLE_BER_EXPECTED_0ID.length,
         lengthOfUtf8: SAMPLE_BER_EXPECTED_STRING.length,
         lengthOfUtc: SAMPLE_BER_EXPECTED_UTC.length,
+        lengthOfBit: 2,
+        lengthOfOctet: 4,
       });
     });
 
@@ -67,7 +95,6 @@ describe("UTF8-PARSER TEST", () => {
 
       const oid = [2, 5, 4, 8]; // 2.5.4.8
       const oidWithPaddingZeros = oid.concat(Array(maxOidLen - oid.length).fill(0));
-
       await circuit.calculateWitness({
         in: inputWithPaddingZeros,
         oid: oidWithPaddingZeros,
@@ -78,6 +105,8 @@ describe("UTF8-PARSER TEST", () => {
         lengthOfOid: SAMPLE_BER_EXPECTED_0ID.length,
         lengthOfUtf8: SAMPLE_BER_EXPECTED_STRING.length,
         lengthOfUtc: SAMPLE_BER_EXPECTED_UTC.length,
+        lengthOfBit: 3,
+        lengthOfOctet: 19,
       });
     });
 
@@ -98,8 +127,11 @@ describe("UTF8-PARSER TEST", () => {
         lengthOfOid: SAMPLE_BER_EXPECTED_0ID.length,
         lengthOfUtf8: SAMPLE_BER_EXPECTED_STRING.length,
         lengthOfUtc: SAMPLE_BER_EXPECTED_UTC.length,
+        lengthOfBit: 3,
+        lengthOfOctet: 19,
       });
     });
+
     it("It Should fail at wrong utf8", async () => {
       const stateName = Array.from(Buffer.from("wrongInput"));
       const stateWithPaddingZeros = stateName.concat(Array(maxStateNameLen - stateName.length).fill(0));
@@ -117,6 +149,8 @@ describe("UTF8-PARSER TEST", () => {
         lengthOfOid: SAMPLE_BER_EXPECTED_0ID.length,
         lengthOfUtf8: SAMPLE_BER_EXPECTED_STRING.length,
         lengthOfUtc: SAMPLE_BER_EXPECTED_UTC.length,
+        lengthOfBit: 3,
+        lengthOfOctet: 19,
       });
     });
 
@@ -137,6 +171,8 @@ describe("UTF8-PARSER TEST", () => {
         lengthOfOid: SAMPLE_BER_EXPECTED_0ID.length,
         lengthOfUtf8: SAMPLE_BER_EXPECTED_STRING.length,
         lengthOfUtc: SAMPLE_BER_EXPECTED_UTC.length,
+        lengthOfBit: 3,
+        lengthOfOctet: 19,
       });
     });
   });
@@ -164,6 +200,8 @@ describe("UTF8-PARSER TEST", () => {
         lengthOfOid: SAMPLE_BER_EXPECTED_0ID.length,
         lengthOfUtf8: SAMPLE_BER_EXPECTED_STRING.length,
         lengthOfUtc: SAMPLE_BER_EXPECTED_UTC.length,
+        lengthOfBit: 3,
+        lengthOfOctet: 8,
       });
     });
   });
@@ -190,6 +228,8 @@ describe("UTF8-PARSER TEST", () => {
         lengthOfOid: SAMPLE_BER_EXPECTED_0ID.length,
         lengthOfUtf8: SAMPLE_BER_EXPECTED_STRING.length,
         lengthOfUtc: SAMPLE_BER_EXPECTED_UTC.length,
+        lengthOfBit: 3,
+        lengthOfOctet: 18,
       });
     });
   });
