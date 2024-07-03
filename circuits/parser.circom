@@ -20,6 +20,16 @@ template AsnParser(N, lengthOfOid, lengthOfUtf8) {
     // ? outRangeForUTF8 Contains all utf8 start,endIndex
 }
 
+function processContainerTag(tag, length, currentIndex) {
+        var LONG_FORM_MASK = 0x80;
+
+        if ((length & LONG_FORM_MASK) != 0) {
+            var offset = calculate_offset(length);
+            return currentIndex + offset + 2;
+        }
+        return currentIndex + 2;
+}
+
 template AsnStartAndEndIndex(maxLength, maxlengthOfOid, maxlengthOfString, maxlengthOfUtc, maxlengthOfOctetString, maxlengthOfBitString) {
     signal input  in[maxLength];
     signal input  actualLength;
@@ -86,18 +96,14 @@ template AsnStartAndEndIndex(maxLength, maxlengthOfOid, maxlengthOfString, maxle
         ASN_TAG ==  CONTEXT_SPECIFIC_3 || 
         ASN_TAG ==  CONTEXT_SPECIFIC_4
       ){
-          var isLongForm = (ASN_LENGTH & 0x80) == 0 ? 0 : 1;
-          if (isLongForm == 1){
-            var offset = calculate_offset(ASN_LENGTH);
-            var endIndex = i + offset + 2;
-            i = endIndex;
-          } else{
-                i += 2; 
-          }
+        i = processContainerTag(ASN_TAG, ASN_LENGTH, i);
       }
-        else if (ASN_TAG == OCTET_STRING){
-
+      else if (ASN_TAG == 0x24) { 
+            i += 2;
+      }
+      else if (ASN_TAG == OCTET_STRING){
              var isLongForm = (ASN_LENGTH & 0x80) == 0 ? 0 : 1;
+
              var length = 0;
                 if (isLongForm) {
                     var numBytes = ASN_LENGTH & 0x7f;
@@ -117,13 +123,28 @@ template AsnStartAndEndIndex(maxLength, maxlengthOfOid, maxlengthOfString, maxle
                     num_of_octet_string++;
 
                 } else{
-                    var startIndex = i;
-                    var endIndex = startIndex + ASN_LENGTH + 2;
-                    i = endIndex;
+                    var isEmbedded = in[i + 2];
 
-                    startIndicesOctet[num_of_octet_string] =  startIndex;
-                    endIndicsOctet[num_of_octet_string] = endIndex;
-                    num_of_octet_string++;
+                    if (isEmbedded == BIT_STRING || isEmbedded == OCTET_STRING ) {
+                         var startIndex = i;
+                         var endIndex = i + 2;
+                         i = endIndex;    
+
+                        startIndicesOctet[num_of_octet_string] =  startIndex;
+                        endIndicsOctet[num_of_octet_string] = endIndex;
+                        num_of_octet_string++;    
+                    }
+                    else { 
+                        var startIndex = i;
+                        var endIndex = startIndex + ASN_LENGTH + 2;
+                        i = endIndex;    
+
+                        startIndicesOctet[num_of_octet_string] =  startIndex;
+                        endIndicsOctet[num_of_octet_string] = endIndex;
+                        num_of_octet_string++;
+                    }
+                    
+
                 }
         }
         else {
@@ -136,21 +157,22 @@ template AsnStartAndEndIndex(maxLength, maxlengthOfOid, maxlengthOfString, maxle
                     endIndicesOids[num_of_oids] = endIndex;
                     num_of_oids++;
                 }
-                if (ASN_TAG ==  UTF8_STRING) {
+                else if (ASN_TAG ==  UTF8_STRING) {
                     startIndicesUTF8[num_of_utf8] =  startIndex;
                     endIndicesUTF8[num_of_utf8]   = endIndex;
                     num_of_utf8++;
                 }
-                if (ASN_TAG == UTC_TIME){
+                else if (ASN_TAG == UTC_TIME){
                     startIndicesUTC[num_of_utc_time] =  startIndex;
                     endIndicesUTC[num_of_utc_time]   = endIndex;
                     num_of_utc_time++;
                 }
 
-                if (ASN_TAG == BIT_STRING) {
+                else if (ASN_TAG == BIT_STRING) {
                     startIndicesBit[num_of_bit_string] = startIndex;
                     endIndicesBit[num_of_bit_string] = endIndex;
                     num_of_bit_string++;  
+                    // log("here");
                 }
         }
     }
@@ -183,6 +205,17 @@ template AsnStartAndEndIndex(maxLength, maxlengthOfOid, maxlengthOfString, maxle
     }
 
 
+    signal num_of_oids_signal <-- num_of_oids;
+    signal num_of_utf8_signal <-- num_of_utf8;
+    signal num_of_utc_time_signal <-- num_of_utc_time;
+    signal num_of_octet_string_signal <-- num_of_octet_string;
+    signal num_of_bit_string_signal <-- num_of_bit_string;
+
+    num_of_oids_signal === actualLengthOfOid;
+    num_of_utf8_signal === actualLengthOfString;
+    num_of_utc_time_signal === actualLengthOfUTC;
+    num_of_octet_string_signal === actualLengthOfOctetString;
+    num_of_bit_string_signal === actualLengthOfBitString;
 }
 
 template AsnLength(N) {

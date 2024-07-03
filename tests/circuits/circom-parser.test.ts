@@ -272,7 +272,7 @@ describe("Circom Parser Range Circuit", () => {
   const inputWithPaddingZero = input.concat(Array(N - input.length).fill(0));
 
   const actualBitStringLen = 3;
-  const actualOctetStringLen = 19;
+  const actualOctetStringLen = 18;
   before(async () => {
     circuit = await circomkit.WitnessTester(
       `AsnStartAndEndIndex_${N}_${MAX_OID_OUTPUT_LENGTH}_${MAX_UTF8_OUTPUT_LENGTH}_${MAX_UTC_TIME_LENGTH}`,
