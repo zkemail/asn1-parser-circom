@@ -13,7 +13,10 @@ import {
   SAMPLE_BER_EXPECTED_STRING,
   SAMPLE_BER_EXPECTED_UTC,
   SAMPLE_DER,
+  SAMPLE_X509_EXPECTED_STRING,
+  SAMPLE_X509_EXPECTED_UTC,
   SAMPLE_X_509,
+  SAMPLE_X_509_EXPECTED_OID,
 } from "../../src/constant";
 import { circomkit } from "../common";
 
@@ -81,11 +84,11 @@ describe("UTF8-PARSER TEST", () => {
         actualLength: N,
         stateNameLen: stateName.length,
         oidLen: oid.length,
-        lengthOfOid: SAMPLE_BER_EXPECTED_0ID.length,
-        lengthOfUtf8: SAMPLE_BER_EXPECTED_STRING.length,
-        lengthOfUtc: SAMPLE_BER_EXPECTED_UTC.length,
+        lengthOfOid: SAMPLE_X_509_EXPECTED_OID.length,
+        lengthOfUtf8: SAMPLE_X509_EXPECTED_STRING.length,
+        lengthOfUtc: SAMPLE_X509_EXPECTED_UTC.length,
         lengthOfBit: 2,
-        lengthOfOctet: 4,
+        lengthOfOctet: 7,
       });
     });
 
@@ -102,11 +105,11 @@ describe("UTF8-PARSER TEST", () => {
         actualLength: N,
         stateNameLen: stateName.length,
         oidLen: oid.length,
-        lengthOfOid: SAMPLE_BER_EXPECTED_0ID.length,
-        lengthOfUtf8: SAMPLE_BER_EXPECTED_STRING.length,
-        lengthOfUtc: SAMPLE_BER_EXPECTED_UTC.length,
-        lengthOfBit: 3,
-        lengthOfOctet: 19,
+        lengthOfOid: SAMPLE_X_509_EXPECTED_OID.length,
+        lengthOfUtf8: SAMPLE_X509_EXPECTED_STRING.length,
+        lengthOfUtc: SAMPLE_X509_EXPECTED_UTC.length,
+        lengthOfBit: 2,
+        lengthOfOctet: 7,
       });
     });
 
@@ -124,11 +127,11 @@ describe("UTF8-PARSER TEST", () => {
         actualLength: N,
         stateNameLen: stateName.length,
         oidLen: oid.length,
-        lengthOfOid: SAMPLE_BER_EXPECTED_0ID.length,
-        lengthOfUtf8: SAMPLE_BER_EXPECTED_STRING.length,
-        lengthOfUtc: SAMPLE_BER_EXPECTED_UTC.length,
-        lengthOfBit: 3,
-        lengthOfOctet: 19,
+        lengthOfOid: SAMPLE_X_509_EXPECTED_OID.length,
+        lengthOfUtf8: SAMPLE_X509_EXPECTED_STRING.length,
+        lengthOfUtc: SAMPLE_X509_EXPECTED_UTC.length,
+        lengthOfBit: 2,
+        lengthOfOctet: 7,
       });
     });
 
@@ -146,11 +149,11 @@ describe("UTF8-PARSER TEST", () => {
         actualLength: N,
         stateNameLen: stateName.length,
         oidLen: oid.length,
-        lengthOfOid: SAMPLE_BER_EXPECTED_0ID.length,
-        lengthOfUtf8: SAMPLE_BER_EXPECTED_STRING.length,
-        lengthOfUtc: SAMPLE_BER_EXPECTED_UTC.length,
-        lengthOfBit: 3,
-        lengthOfOctet: 19,
+        lengthOfOid: SAMPLE_X_509_EXPECTED_OID.length,
+        lengthOfUtf8: SAMPLE_X509_EXPECTED_STRING.length,
+        lengthOfUtc: SAMPLE_X509_EXPECTED_UTC.length,
+        lengthOfBit: 2,
+        lengthOfOctet: 7,
       });
     });
 
@@ -168,11 +171,11 @@ describe("UTF8-PARSER TEST", () => {
         actualLength: N,
         stateNameLen: stateName.length,
         oidLen: oid.length,
-        lengthOfOid: SAMPLE_BER_EXPECTED_0ID.length,
-        lengthOfUtf8: SAMPLE_BER_EXPECTED_STRING.length,
-        lengthOfUtc: SAMPLE_BER_EXPECTED_UTC.length,
-        lengthOfBit: 3,
-        lengthOfOctet: 19,
+        lengthOfOid: SAMPLE_X_509_EXPECTED_OID.length,
+        lengthOfUtf8: SAMPLE_X509_EXPECTED_STRING.length,
+        lengthOfUtc: SAMPLE_X509_EXPECTED_UTC.length,
+        lengthOfBit: 2,
+        lengthOfOctet: 7,
       });
     });
   });
