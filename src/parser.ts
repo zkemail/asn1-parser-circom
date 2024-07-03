@@ -35,9 +35,15 @@ export class ASN {
           ASN_ARRAY.push(data.slice(i, i + 2));
           i += 2;
         }
+      } else if (ASN_TAG == 0x24) {
+        ASN_ARRAY.push(data.slice(i, i + 2));
+        i += 2;
       } else if (ASN_TAG == ASN1_TAGS.OCTET_STRING) {
+        const isEmbedded = data[i + 2]; // third byte is embedded
+
         const isLongForm = (ASN_LENGTH & 0x80) === 0 ? false : true;
         let length = 0;
+
         if (isLongForm) {
           let numBytes = ASN_LENGTH & 0x7f;
           let temp = numBytes;
@@ -52,10 +58,16 @@ export class ASN {
           ASN_ARRAY.push(data.slice(i, endIndex));
           i = endIndex;
         } else {
-          const startIndex = i;
-          const endIndex = startIndex + ASN_LENGTH + 2;
-          ASN_ARRAY.push(data.slice(i, endIndex));
-          i = endIndex;
+          if (isEmbedded === ASN1_TAGS.BIG_STRING || isEmbedded === ASN1_TAGS.OCTET_STRING) {
+            const endIndex = i + 2;
+            ASN_ARRAY.push(data.slice(i, endIndex));
+            i = endIndex;
+          } else {
+            const startIndex = i;
+            const endIndex = startIndex + ASN_LENGTH + 2;
+            ASN_ARRAY.push(data.slice(i, endIndex));
+            i = endIndex;
+          }
         }
       } else {
         const startIndex = i;
@@ -71,18 +83,26 @@ export class ASN {
     const oidArray: string[] = [];
     const utf8Array: string[] = [];
     const utcArray: string[] = [];
+    const octetArray: string[] = [];
+    const bitArray: string[] = [];
     asn1.forEach((e) => {
-      if (e[0] === 0x06) {
+      if (e[0] === ASN1_TAGS.OBJECT_IDENTIFIER) {
         oidArray.push(this.parseOid(e));
       }
       if (e[0] == 0x0c) {
         utf8Array.push(this.parseUTFString(e));
       }
-      if (e[0] == 0x17) {
+      if (e[0] == ASN1_TAGS.UTC_TIME) {
         utcArray.push(this.parseUTCString(e));
       }
+      if (e[0] == ASN1_TAGS.BIG_STRING) {
+        bitArray.push(e.toString());
+      }
+      if (e[0] == ASN1_TAGS.OCTET_STRING) {
+        octetArray.push(e.toString());
+      }
     });
-    return { OID: oidArray, UTF8Array: utf8Array, UTCString: utcArray };
+    return { OID: oidArray, UTF8Array: utf8Array, UTCString: utcArray, BitArray: bitArray, OctetArray: octetArray };
   }
 
   static parseUTCString(bytes: number[] | Uint8Array): string {

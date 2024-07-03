@@ -20,6 +20,7 @@ export const ASN1_TAGS = {
   OCTET_STRING: 0x04,
   OBJECT_IDENTIFIER: 0x06,
   UTC_TIME: 0x17,
+  BIG_STRING: 0x03,
 };
 
 export const MAX_STATE_NAME_LEN = 30;
