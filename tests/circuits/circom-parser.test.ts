@@ -31,6 +31,7 @@ describe("DecodeLength", () => {
     const N = input.length;
 
     circuit = await CompileCircuit(CircuitName.DecodeLength, [N]);
+
     await circuit.calculateWitness({ in: input });
     await circuit.expectPass({ in: input }, { out: 1183 });
   });

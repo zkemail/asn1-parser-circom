@@ -1,6 +1,7 @@
 pragma circom 2.0.0;
 
 include "@zk-email/circuits/utils/array.circom";
+include "circomlib/circuits/comparators.circom";
 include "./utils.circom";
 include "./tag_class.circom";
 
@@ -20,15 +21,6 @@ template AsnParser(N, lengthOfOid, lengthOfUtf8) {
     // ? outRangeForUTF8 Contains all utf8 start,endIndex
 }
 
-function processContainerTag(tag, length, currentIndex) {
-        var LONG_FORM_MASK = 0x80;
-
-        if ((length & LONG_FORM_MASK) != 0) {
-            var offset = calculate_offset(length);
-            return currentIndex + offset + 2;
-        }
-        return currentIndex + 2;
-}
 
 template AsnStartAndEndIndex(maxLength, maxlengthOfOid, maxlengthOfString, maxlengthOfUtc, maxlengthOfOctetString, maxlengthOfBitString) {
     signal input  in[maxLength];
@@ -46,6 +38,36 @@ template AsnStartAndEndIndex(maxLength, maxlengthOfOid, maxlengthOfString, maxle
     signal output outRangeForBitString[maxlengthOfBitString][2];
     signal output outRangeForOctetString[maxlengthOfOctetString][2]; 
 
+    // Check if actualLengthOfString is within the allowed range
+    component actualLengthCheck = LessThan(32);
+    actualLengthCheck.in[0] <== actualLength;
+    actualLengthCheck.in[1] <== maxLength;
+    actualLengthCheck.out  === 1;
+
+    component oidLengthCheck = LessThan(32);
+    oidLengthCheck.in[0] <== actualLengthOfOid;
+    oidLengthCheck.in[1] <== maxlengthOfOid;
+    oidLengthCheck.out === 1;
+
+    component stringLengthCheck = LessThan(32);
+    stringLengthCheck.in[0] <== actualLengthOfString;
+    stringLengthCheck.in[1] <== maxlengthOfString;
+    stringLengthCheck.out === 1;
+
+    component utcLengthCheck = LessThan(32);
+    utcLengthCheck.in[0] <== actualLengthOfUTC;
+    utcLengthCheck.in[1] <== maxlengthOfUtc;
+    utcLengthCheck.out === 1;
+
+    component octetStringLengthCheck = LessThan(32);
+    octetStringLengthCheck.in[0] <== actualLengthOfOctetString;
+    octetStringLengthCheck.in[1] <== maxlengthOfOctetString;
+    octetStringLengthCheck.out === 1;
+
+    component bitStringLengthCheck = LessThan(32);
+    bitStringLengthCheck.in[0] <== actualLengthOfBitString;
+    bitStringLengthCheck.in[1] <== maxlengthOfBitString;
+    bitStringLengthCheck.out === 1;
 
     var SEQUENCE           =  tag_class_sequence();
     var SET                =  tag_class_set();
@@ -172,38 +194,144 @@ template AsnStartAndEndIndex(maxLength, maxlengthOfOid, maxlengthOfString, maxle
                     startIndicesBit[num_of_bit_string] = startIndex;
                     endIndicesBit[num_of_bit_string] = endIndex;
                     num_of_bit_string++;  
-                    // log("here");
                 }
         }
     }
 
+    component selectorForOid1[maxlengthOfOid];
+    component selectorForOid2[maxlengthOfOid];
+    component selectorsEqualForOid[maxlengthOfOid];
 
-    for(var k = 0; k < maxlengthOfOid ;k++) {
+    for(var k = 0; k < maxlengthOfOid; k++) {
+        var start_tag_class = in[startIndicesOids[k]];
+        var condition = k < actualLengthOfOid ? 0 : 1;
+
+        selectorForOid1[k] = Selector();
+        selectorForOid1[k].condition <-- condition; 
+        selectorForOid1[k].in[0] <-- start_tag_class;
+        selectorForOid1[k].in[1] <== 0;
+        
+        selectorForOid2[k] = Selector();
+        selectorForOid2[k].condition <-- condition;
+        selectorForOid2[k].in[0] <== tag_class_object_identifier();
+        selectorForOid2[k].in[1] <== 0x00;
+        
+        selectorsEqualForOid[k] = IsEqual();
+        selectorsEqualForOid[k].in[0] <== selectorForOid1[k].out;
+        selectorsEqualForOid[k].in[1] <== selectorForOid2[k].out;
+        selectorsEqualForOid[k].out === 1;
+
         outRangeForOID[k][0] <-- startIndicesOids[k];
         outRangeForOID[k][1] <-- endIndicesOids[k];
     }
 
+    component selectorForUtf1[maxlengthOfString];
+    component selectorForUtf2[maxlengthOfString];
+    component selectorsEqualForUtf[maxlengthOfString];
+
     for(var l = 0; l < maxlengthOfString ;l++) {
+        
+        var start_tag_class = in[startIndicesUTF8[l]];
+        var condition = l < actualLengthOfString ? 0 : 1;
+
+        selectorForUtf1[l] = Selector();
+        selectorForUtf1[l].condition <-- condition; 
+        selectorForUtf1[l].in[0] <-- start_tag_class;
+        selectorForUtf1[l].in[1] <== 0;
+
+        selectorForUtf2[l] = Selector();
+        selectorForUtf2[l].condition <-- condition;
+        selectorForUtf2[l].in[0] <==  tag_utf8_string();
+        selectorForUtf2[l].in[1] <== 0x00;
+        
+        selectorsEqualForUtf[l] = IsEqual();
+        selectorsEqualForUtf[l].in[0] <== selectorForUtf1[l].out;
+        selectorsEqualForUtf[l].in[1] <== selectorForUtf2[l].out;
+        selectorsEqualForUtf[l].out === 1;
+
         outRangeForUTF8[l][0] <-- startIndicesUTF8[l];
         outRangeForUTF8[l][1] <-- endIndicesUTF8[l];
     }
 
+    component selectorForUtc1[maxlengthOfUtc];
+    component selectorForUtc2[maxlengthOfUtc];
+    component selectorsEqualForUtc[maxlengthOfUtc];
+
     for(var m = 0; m < maxlengthOfUtc ;m++) {
+        var start_tag_class = in[startIndicesUTC[m]];
+        var condition = m < actualLengthOfUTC ? 0 : 1;     
+
+        selectorForUtc1[m] = Selector();
+        selectorForUtc1[m].condition <-- condition; 
+        selectorForUtc1[m].in[0] <-- start_tag_class;
+        selectorForUtc1[m].in[1] <== 0;
+
+        selectorForUtc2[m] = Selector();
+        selectorForUtc2[m].condition <-- condition;
+        selectorForUtc2[m].in[0] <== tag_class_utc_time();
+        selectorForUtc2[m].in[1] <== 0x00;
+        
+        selectorsEqualForUtc[m] = IsEqual();
+        selectorsEqualForUtc[m].in[0] <== selectorForUtc1[m].out;
+        selectorsEqualForUtc[m].in[1] <== selectorForUtc2[m].out;
+        selectorsEqualForUtc[m].out === 1;   
+
         outRangeForUTC[m][0] <-- startIndicesUTC[m];
         outRangeForUTC[m][1] <-- endIndicesUTC[m];
     }
 
+    component selectorForOctet1[maxlengthOfOctetString];
+    component selectorForOctet2[maxlengthOfOctetString];
+    component selectorsEqualForOctet[maxlengthOfOctetString];
+
     for(var n = 0; n < maxlengthOfOctetString ;n++) {
+        var start_tag_class = in[startIndicesOctet[n]];
+        var condition = n < actualLengthOfOctetString ? 0 : 1;     
+        selectorForOctet1[n] = Selector();
+        selectorForOctet1[n].condition <-- condition; 
+        selectorForOctet1[n].in[0] <-- start_tag_class;
+        selectorForOctet1[n].in[1] <== 0;
+
+        selectorForOctet2[n] = Selector();
+        selectorForOctet2[n].condition <-- condition;
+        selectorForOctet2[n].in[0] <== tag_octet_string();
+        selectorForOctet2[n].in[1] <== 0x00;
+        
+        selectorsEqualForOctet[n] = IsEqual();
+        selectorsEqualForOctet[n].in[0] <== selectorForOctet1[n].out;
+        selectorsEqualForOctet[n].in[1] <== selectorForOctet2[n].out;
+        selectorsEqualForOctet[n].out === 1;   
+
         outRangeForOctetString[n][0] <-- startIndicesOctet[n];
         outRangeForOctetString[n][1] <-- endIndicsOctet[n];
     }
 
+    component selectorForBit1[maxlengthOfBitString];
+    component selectorForBit2[maxlengthOfBitString];
+    component selectorsEqualForBit[maxlengthOfBitString];
 
     for(var n = 0; n < maxlengthOfBitString ;n++) {
+        var start_tag_class = in[startIndicesBit[n]];
+        var condition = n < actualLengthOfBitString ? 0 : 1;     
+
+        selectorForBit1[n] = Selector();
+        selectorForBit1[n].condition <-- condition; 
+        selectorForBit1[n].in[0] <-- start_tag_class;
+        selectorForBit1[n].in[1] <== 0;
+
+        selectorForBit2[n] = Selector();
+        selectorForBit2[n].condition <-- condition;
+        selectorForBit2[n].in[0] <== tag_class_bit_string();
+        selectorForBit2[n].in[1] <== 0x00;
+        
+        selectorsEqualForBit[n] = IsEqual();
+        selectorsEqualForBit[n].in[0] <== selectorForBit1[n].out;
+        selectorsEqualForBit[n].in[1] <== selectorForBit2[n].out;
+        selectorsEqualForBit[n].out === 1;   
+
         outRangeForBitString[n][0] <-- startIndicesBit[n];
         outRangeForBitString[n][1] <-- endIndicesBit[n];
     }
-
 
     signal num_of_oids_signal <-- num_of_oids;
     signal num_of_utf8_signal <-- num_of_utf8;
@@ -211,11 +339,34 @@ template AsnStartAndEndIndex(maxLength, maxlengthOfOid, maxlengthOfString, maxle
     signal num_of_octet_string_signal <-- num_of_octet_string;
     signal num_of_bit_string_signal <-- num_of_bit_string;
 
-    num_of_oids_signal === actualLengthOfOid;
-    num_of_utf8_signal === actualLengthOfString;
-    num_of_utc_time_signal === actualLengthOfUTC;
-    num_of_octet_string_signal === actualLengthOfOctetString;
-    num_of_bit_string_signal === actualLengthOfBitString;
+
+    component eqOids = IsEqual();
+    component eqUtf8 = IsEqual();
+    component eqUtcTime = IsEqual();
+    component eqOctetString = IsEqual();
+    component eqBitString = IsEqual();
+
+    eqOids.in[0] <== num_of_oids_signal;
+    eqOids.in[1] <== actualLengthOfOid;
+
+    eqUtf8.in[0] <== num_of_utf8_signal;
+    eqUtf8.in[1] <== actualLengthOfString;
+
+    eqUtcTime.in[0] <== num_of_utc_time_signal;
+    eqUtcTime.in[1] <== actualLengthOfUTC;
+
+    eqOctetString.in[0] <== num_of_octet_string_signal;
+    eqOctetString.in[1] <== actualLengthOfOctetString;
+
+    eqBitString.in[0] <== num_of_bit_string_signal;
+    eqBitString.in[1] <== actualLengthOfBitString;
+
+    eqOids.out === 1;
+    eqUtf8.out === 1;
+    eqUtcTime.out === 1;
+    eqOctetString.out === 1;
+    eqBitString.out === 1;
+
 }
 
 template AsnLength(N) {

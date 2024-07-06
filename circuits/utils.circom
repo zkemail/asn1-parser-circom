@@ -8,6 +8,26 @@ template PrintArray(N) {
 }
 
 
+// Selector template to choose between two inputs based on a condition
+template Selector() {
+    signal input condition;
+    signal input in[2];
+    signal output out;
+    out <== condition * (in[1] - in[0]) + in[0];
+}
+
+
+
+function processContainerTag(tag, length, currentIndex) {
+        var LONG_FORM_MASK = 0x80;
+        
+        if ((length & LONG_FORM_MASK) != 0) {
+            var offset = calculate_offset(length);
+            return currentIndex + offset + 2;
+        }
+        return currentIndex + 2;
+}
+
 function calculate_offset(n){
     return n & 0x7f;
 }
