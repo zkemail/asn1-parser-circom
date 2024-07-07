@@ -63,7 +63,9 @@ describe("UTF8-PARSER TEST", () => {
         maxLengthofBit,
       ],
     });
+    console.log("#contraints", await circuit.getConstraintCount());
   });
+
   describe("UTF8StringProver X_509", () => {
     const N = SAMPLE_X_509.length;
 

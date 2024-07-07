@@ -5,22 +5,6 @@ include "circomlib/circuits/comparators.circom";
 include "./utils.circom";
 include "./tag_class.circom";
 
-template AsnParser(N, lengthOfOid, lengthOfUtf8) { 
-    // TODO: FIGURE OUT WAY TO ARRANGE AND SEND OUTPUT;
-    signal input in[N];
-    signal output OID[lengthOfOid];
-    signal output UTF8[lengthOfUtf8];   
-
-    // component asnStartAndEndIndex =  AsnStartAndEndIndex(N,lengthOfOid,lengthOfUtf8);
-    // asnStartAndEndIndex.in <== in;
-
-    // signal outRangeForOID[lengthOfOid][2] <== asnStartAndEndIndex.outRangeForOID;
-    // signal outRangeForUTF8[lengthOfUtf8][2] <== asnStartAndEndIndex.outRangeForUTF8;
-
-    // ? outRangeForOID  Contains all start,End Index 
-    // ? outRangeForUTF8 Contains all utf8 start,endIndex
-}
-
 
 template AsnStartAndEndIndex(maxLength, maxlengthOfOid, maxlengthOfString, maxlengthOfUtc, maxlengthOfOctetString, maxlengthOfBitString) {
     signal input  in[maxLength];

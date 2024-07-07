@@ -237,6 +237,7 @@ describe("Circom Parser Range Circuit", () => {
         ],
       }
     );
+    console.log("#contraints", await circuit.getConstraintCount());
   });
   it("It Should take input", async () => {
     await circuit.calculateWitness({
