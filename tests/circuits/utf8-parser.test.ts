@@ -1,4 +1,3 @@
-import fs from "fs";
 import { WitnessTester } from "circomkit";
 import {
   MAX_ACTUAL_OID_LENGTH,
@@ -82,8 +81,7 @@ describe("UTF8-PARSER TEST", () => {
 
       const oid = [2, 5, 4, 10];
       const oidWithPaddingZeros = oid.concat(Array(maxOidLen - oid.length).fill(0));
-
-      const wt = await circuit.calculateWitness({
+      const s = {
         in: inputWithPaddingZeros,
         oid: oidWithPaddingZeros,
         stateName: stateWithPaddingZeros,
@@ -95,8 +93,8 @@ describe("UTF8-PARSER TEST", () => {
         lengthOfUtc: SAMPLE_X509_EXPECTED_UTC.length,
         lengthOfBit: 2,
         lengthOfOctet: 7,
-      });
-      console.log(wt);
+      };
+      await circuit.expectPass(s);
     });
 
     it("It Should take verify (2.5.4.8) => Telagana", async () => {
@@ -118,7 +116,6 @@ describe("UTF8-PARSER TEST", () => {
         lengthOfBit: 2,
         lengthOfOctet: 7,
       };
-      fs.writeFileSync("test.json", JSON.stringify(s));
       await circuit.expectPass(s);
     });
 
