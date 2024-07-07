@@ -16,8 +16,6 @@ template Selector() {
     out <== condition * (in[1] - in[0]) + in[0];
 }
 
-
-
 function processContainerTag(tag, length, currentIndex) {
         var LONG_FORM_MASK = 0x80;
         

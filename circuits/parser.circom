@@ -5,7 +5,32 @@ include "circomlib/circuits/comparators.circom";
 include "./utils.circom";
 include "./tag_class.circom";
 
-
+/**
+ * @title AsnStartAndEndIndex
+ * @dev This template parses ASN.1 encoded data to find start and end indices of various data types.
+ *
+ * @param maxLength Maximum length of the input array
+ * @param maxlengthOfOid Maximum number of OID segments
+ * @param maxlengthOfString Maximum number of UTF8 string segments
+ * @param maxlengthOfUtc Maximum number of UTC time segments
+ * @param maxlengthOfOctetString Maximum number of Octet String segments
+ * @param maxlengthOfBitString Maximum number of Bit String segments
+ *
+ * @input in[maxLength] The input array containing ASN.1 encoded data
+ * @input actualLength The actual length of the input data
+ * @input actualLengthOfOid The actual number of OID segments
+ * @input actualLengthOfString The actual number of UTF8 string segments
+ * @input actualLengthOfUTC The actual number of UTC time segments
+ * @input actualLengthOfOctetString The actual number of Octet String segments
+ * @input actualLengthOfBitString The actual number of Bit String segments
+ *
+ * @output outRangeForOID[maxlengthOfOid][2] Start and end indices for each OID segment
+ * @output outRangeForUTF8[maxlengthOfString][2] Start and end indices for each UTF8 string segment
+ * @output outRangeForUTC[maxlengthOfUtc][2] Start and end indices for each UTC time segment
+ * @output outRangeForBitString[maxlengthOfBitString][2] Start and end indices for each Bit String segment
+ * @output outRangeForOctetString[maxlengthOfOctetString][2] Start and end indices for each Octet String segment
+ */
+ 
 template AsnStartAndEndIndex(maxLength, maxlengthOfOid, maxlengthOfString, maxlengthOfUtc, maxlengthOfOctetString, maxlengthOfBitString) {
     signal input  in[maxLength];
     signal input  actualLength;
