@@ -8,13 +8,66 @@ template PrintArray(N) {
 }
 
 
+// Selector template to choose between two inputs based on a condition
+template Selector() {
+    signal input condition;
+    signal input in[2];
+    signal output out;
+    out <== condition * (in[1] - in[0]) + in[0];
+}
+
+function processContainerTag(tag, length, currentIndex) {
+        var LONG_FORM_MASK = 0x80;
+        
+        if ((length & LONG_FORM_MASK) != 0) {
+            var offset = calculate_offset(length);
+            return currentIndex + offset + 2;
+        }
+        return currentIndex + 2;
+}
 
 function calculate_offset(n){
     return n & 0x7f;
 }
 
-function tag_class_eoc()  {
-    return 0x00;
+function tag_class_sequence() { 
+    return 0x30;
+}
+
+function tag_class_set() { 
+    return 0x31;
+}
+
+function tag_context_specific_zero () {
+    return 0xa0;
+}
+
+function tag_context_specific_one () {
+    return 0xa1;
+}
+
+function tag_context_specific_two () {
+    return 0xa2;
+}
+
+function tag_context_specific_three () {
+    return 0xa3;
+}
+
+function tag_context_specific_four () {
+    return 0xa4;
+}
+
+function tag_octet_string () {
+    return 0x04;
+}
+
+function tag_class_object_identifier () {
+    return 0x06;
+}
+
+function tag_utf8_string () {
+    return 0x0c;
 }
 
 function tag_class_boolean()  {
@@ -29,98 +82,6 @@ function tag_class_bit_string()  {
     return 0x03;
 }
 
-function tag_class_octet_string()  {
-    return 0x04;
-}
-
-function tag_class_null()  {
-    return 0x05;
-}
-
-function tag_class_object_identifier()  {
-    return 0x06;
-}
-
-function tag_class_object_descriptor()  {
-    return 0x07;
-}
-
-function tag_class_external()  {
-    return 0x08;
-}
-
-function tag_class_real()  {
-    return 0x09;
-}
-
-function tag_class_enumerated()  {
-    return 0x0A;
-}
-
-function tag_class_embedded_pdv()  {
-    return 0x0B;
-}
-
-function tag_class_utf8_string()  {
-    return 0x0C;
-}
-
-function tag_class_relative_oid()  {
-    return 0x0D;
-}
-
-function tag_class_sequence()  {
-    return 0x10;
-}
-
-function tag_class_set()  {
-    return 0x11;
-}
-
-function tag_class_numeric_string()  {
-    return 0x12;
-}
-
-function tag_class_printable_string()  {
-    return 0x13;
-}
-
-function tag_class_teletex_string()  {
-    return 0x14;
-}
-
-function tag_class_videotex_string()  {
-    return 0x15;
-}
-
-function tag_class_ia5_string()  {
-    return 0x16;
-}
-
 function tag_class_utc_time()  {
     return 0x17;
-}
-
-function tag_class_generalized_time()  {
-    return 0x18;
-}
-
-function tag_class_graphic_string()  {
-    return 0x19;
-}
-
-function tag_class_visible_string()  {
-    return 0x1A;
-}
-
-function tag_class_general_string()  {
-    return 0x1B;
-}
-
-function tag_class_universal_string()  {
-    return 0x1C;
-}
-
-function tag_class_bmp_string()  {
-    return 0x1E;
 }

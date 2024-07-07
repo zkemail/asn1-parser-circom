@@ -3,17 +3,36 @@ pragma circom 2.0.0;
 include "./parser.circom";
 include "circomlib/circuits/comparators.circom";
 
+
 /**
  * @title UTF8StringProver
- * @dev This circuit allows you to prove that you have an object identifier with a UTF8 string.
- * @param N The total length of the input array
- * @param stateNameLen The length of the state name
- * @param oidLen The length of the Object Identifier
- * @param lengthOfOid The number of OID segments
- * @param lengthOfUtf8 The number of UTF8 segments
+ * @dev This circuit allows you to prove that you have an object identifier with a UTF8 string within an ASN.1 encoded structure.
+ *
+ * @param maxLength The maximum length of the input array
+ * @param maxStateNameLen The maximum length of the state name
+ * @param maxOidLen The maximum length of the Object Identifier
+ * @param maxLengthOfOid The maximum number of OID segments in the input
+ * @param maxLengthOfUtf8 The maximum number of UTF8 segments in the input
+ * @param maxlengthOfUtc The maximum number of UTC time segments in the input
+ * @param maxlengthOfOctetString The maximum number of Octet String segments in the input
+ * @param maxlengthOfBitString The maximum number of Bit String segments in the input
+ *
+ * @input in[maxLength] The input array containing the ASN.1 encoded data
+ * @input oid[maxOidLen] The Object Identifier to be verified
+ * @input stateName[maxStateNameLen] The state name (UTF8 string) to be verified
+ * @input actualLength The actual length of the input data
+ * @input stateNameLen The actual length of the state name
+ * @input oidLen The actual length of the Object Identifier
+ * @input lengthOfOid The number of OID segments in the input
+ * @input lengthOfUtf8 The number of UTF8 segments in the input
+ * @input lengthOfUtc The number of UTC time segments in the input
+ * @input lengthOfOctet The number of Octet String segments in the input
+ * @input lengthOfBit The number of Bit String segments in the input
+ *
+ * @output out A signal indicating whether the proof is valid (1) or not (0)
  */
  
-template UTF8StringProver(maxLength, maxStateNameLen, maxOidLen, maxLengthOfOid, maxLengthOfUtf8) { 
+template UTF8StringProver (maxLength, maxStateNameLen, maxOidLen, maxLengthOfOid, maxLengthOfUtf8, maxlengthOfUtc, maxlengthOfOctetString, maxlengthOfBitString) { 
     signal input in[maxLength];
     signal input oid[maxOidLen]; 
     signal input stateName[maxStateNameLen]; 
@@ -25,14 +44,21 @@ template UTF8StringProver(maxLength, maxStateNameLen, maxOidLen, maxLengthOfOid,
 
     signal input lengthOfOid;
     signal input lengthOfUtf8;
+    signal input lengthOfUtc;
+    signal input lengthOfOctet;
+    signal input lengthOfBit;
 
     signal output out;
 
-    component asnStartAndEndIndex = AsnStartAndEndIndex(maxLength, maxLengthOfOid, maxLengthOfUtf8);
+    component asnStartAndEndIndex = AsnStartAndEndIndex(maxLength, maxLengthOfOid, maxLengthOfUtf8, maxlengthOfUtc, maxlengthOfOctetString, maxlengthOfBitString);
+
     asnStartAndEndIndex.in <== in;
     asnStartAndEndIndex.actualLength <== actualLength;
     asnStartAndEndIndex.actualLengthOfOid <== lengthOfOid;
     asnStartAndEndIndex.actualLengthOfString <== lengthOfUtf8;
+    asnStartAndEndIndex.actualLengthOfUTC <== lengthOfUtc;
+    asnStartAndEndIndex.actualLengthOfOctetString <== lengthOfOctet;
+    asnStartAndEndIndex.actualLengthOfBitString <== lengthOfBit;
 
     signal outRangeForOID[maxLengthOfOid][2] <== asnStartAndEndIndex.outRangeForOID;
     signal outRangeForUTF8[maxLengthOfUtf8][2] <== asnStartAndEndIndex.outRangeForUTF8;

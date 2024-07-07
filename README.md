@@ -7,11 +7,18 @@ This circuits can extract and verify key information from ASN.1 encoded data str
 
 ## Circuits
 
-1. **AsnStartAndEndIndex**: It identifes the start and end indices of OIDs and UTF8 strings within the input array. It outputs two arrays:
+1. **AsnStartAndEndIndex**: Identifies the start and end indices of various ASN.1 data types within the input array. It outputs several arrays:
    - `outRangeForOID[maxlengthOfOid][2]`: Contains start and end indices for each OID.
    - `outRangeForUTF8[maxlengthOfString][2]`: Contains start and end indices for each UTF8 string.
-2. **UTF8StringParser**: Extracts and parses UTF8 string values from the ASN.1 structure.
-3. **AsnParser** **(WIP)**: generic parser which extracts Integers,Signatures,UT8String and Date (WIP).
+   - `outRangeForUTC[maxlengthOfUtc][2]`: Contains start and end indices for each UTC time.
+   - `outRangeForBitString[maxlengthOfBitString][2]`: Contains start and end indices for each Bit String.
+   - `outRangeForOctetString[maxlengthOfOctetString][2]`: Contains start and end indices for each Octet String.
+   - ![image](https://github.com/zkemail/asn1-parser-circom/assets/88543171/128430bd-d3da-43d2-8b8e-755c587ef07d)
+      
+2. **UTF8StringProver**: Extracts and parses UTF8 string values from the ASN.1 structure.
+   - ![image](https://github.com/zkemail/asn1-parser-circom/assets/88543171/cd5485c5-63f6-4c42-9ceb-99cc4596832d)
+
+5. **AsnParser** **(WIP)**: generic parser which extracts Integers,Signatures,UT8String and Date (WIP).
 
 This project is supported by [zkemail](https://github.com/zkemail).
 
@@ -28,6 +35,9 @@ yarn
 ```bash
 yarn test
 ```
+
+
+
 
 ## UTF8StringParser App
 

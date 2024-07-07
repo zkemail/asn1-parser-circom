@@ -1,21 +1,27 @@
 import { WitnessTester } from "circomkit";
 import {
+  MAX_BIT_STRING_LENGTH,
   MAX_INPUT_LENGTH,
+  MAX_OCTET_STRING_LENGTH,
   MAX_OID_OUTPUT_LENGTH,
+  MAX_UTC_TIME_LENGTH,
   MAX_UTF8_OUTPUT_LENGTH,
   SAMPLE_BER,
   SAMPLE_BER_EXPECTED_0ID,
   SAMPLE_BER_EXPECTED_STRING,
+  SAMPLE_BER_EXPECTED_UTC,
   SAMPLE_DER,
   SAMPLE_DER_EXPECTED_OID,
   SAMPLE_DER_EXPECTED_STRING,
+  SAMPLE_DER_EXPECTED_UTC,
   SAMPLE_X509_EXPECTED_STRING,
+  SAMPLE_X509_EXPECTED_UTC,
   SAMPLE_X_509,
   SAMPLE_X_509_EXPECTED_OID,
 } from "../../src/constant";
 import { CircuitName, CompileCircuit } from "../../src/utils";
 import { circomkit } from "../common";
-import { getOIDLength } from "../../src/parser-utils";
+import { ASN } from "../../src/parser";
 
 describe("DecodeLength", () => {
   let circuit: WitnessTester<["in"], ["out"]>;
@@ -25,6 +31,7 @@ describe("DecodeLength", () => {
     const N = input.length;
 
     circuit = await CompileCircuit(CircuitName.DecodeLength, [N]);
+
     await circuit.calculateWitness({ in: input });
     await circuit.expectPass({ in: input }, { out: 1183 });
   });
@@ -115,7 +122,7 @@ describe("ObjectIdentifierParser", () => {
   it("It Should take decode oid (1.2.840.113549.1.9.15)", async () => {
     let input = [0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x01, 0x09, 0x0f];
     let N = input.length;
-    let M = getOIDLength(Uint8Array.from(input));
+    let M = ASN.getOIDLength(Uint8Array.from(input));
 
     circuit = await CompileCircuit(CircuitName.ObjectIdentifierParser, [N, M]);
     await circuit.expectPass({ in: input }, { out: [1, 2, 840, 113549, 1, 9, 15] });
@@ -124,7 +131,7 @@ describe("ObjectIdentifierParser", () => {
   it("It Should take decode oid (1.2.840.113549.1.7.2)", async () => {
     let input = [0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x01, 0x07, 0x02];
     let N = input.length;
-    let M = getOIDLength(Uint8Array.from(input));
+    let M = ASN.getOIDLength(Uint8Array.from(input));
 
     circuit = await CompileCircuit(CircuitName.ObjectIdentifierParser, [N, M]);
     await circuit.expectPass({ in: input }, { out: [1, 2, 840, 113549, 1, 7, 2] });
@@ -133,7 +140,7 @@ describe("ObjectIdentifierParser", () => {
   it("It Should take decode oid (1.2.840.10045.4.3.2)", async () => {
     let input = [0x2a, 0x86, 0x48, 0xce, 0x3d, 0x04, 0x03, 0x02];
     let N = input.length;
-    let M = getOIDLength(Uint8Array.from(input));
+    let M = ASN.getOIDLength(Uint8Array.from(input));
 
     circuit = await CompileCircuit(CircuitName.ObjectIdentifierParser, [N, M]);
     await circuit.expectPass({ in: input }, { out: [1, 2, 840, 10045, 4, 3, 2] });
@@ -142,7 +149,7 @@ describe("ObjectIdentifierParser", () => {
   it("It Should take decode oid (2.16.840.1.101.3.4.1.42)", async () => {
     let input = [0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x01, 0x2a];
     let N = input.length;
-    let M = getOIDLength(Uint8Array.from(input));
+    let M = ASN.getOIDLength(Uint8Array.from(input));
 
     circuit = await CompileCircuit(CircuitName.ObjectIdentifierParser, [N, M]);
     await circuit.expectPass({ in: input }, { out: [2, 16, 840, 1, 101, 3, 4, 1, 42] });
@@ -150,7 +157,7 @@ describe("ObjectIdentifierParser", () => {
   it("It Should take decode oid (2.5.4.3)", async () => {
     let input = [0x55, 0x04, 0x03];
     let N = input.length;
-    let M = getOIDLength(Uint8Array.from(input));
+    let M = ASN.getOIDLength(Uint8Array.from(input));
 
     circuit = await CompileCircuit(CircuitName.ObjectIdentifierParser, [N, M]);
     await circuit.expectPass({ in: input }, { out: [2, 5, 4, 3] });
@@ -158,14 +165,14 @@ describe("ObjectIdentifierParser", () => {
 });
 
 describe("Circom Parser", () => {
-  it("It Should take calculate length of der oids & string array", async () => {
+  it("It Should take calculate length of der oids , string array, data array", async () => {
     const N = SAMPLE_DER.length;
     let circuit = await CompileCircuit(CircuitName.AsnLength, [N]);
 
     await circuit.calculateWitness({ in: SAMPLE_DER });
     await circuit.expectPass(
       { in: SAMPLE_DER },
-      { out: [SAMPLE_DER_EXPECTED_OID.length, SAMPLE_DER_EXPECTED_STRING.length] }
+      { out: [SAMPLE_DER_EXPECTED_OID.length, SAMPLE_DER_EXPECTED_STRING.length, SAMPLE_DER_EXPECTED_UTC.length] }
     );
   });
 
@@ -176,7 +183,7 @@ describe("Circom Parser", () => {
     await circuit.calculateWitness({ in: SAMPLE_BER });
     await circuit.expectPass(
       { in: SAMPLE_BER },
-      { out: [SAMPLE_BER_EXPECTED_0ID.length, SAMPLE_BER_EXPECTED_STRING.length] }
+      { out: [SAMPLE_BER_EXPECTED_0ID.length, SAMPLE_BER_EXPECTED_STRING.length, SAMPLE_BER_EXPECTED_UTC.length] }
     );
   });
 
@@ -187,29 +194,50 @@ describe("Circom Parser", () => {
     await circuit.calculateWitness({ in: SAMPLE_X_509 });
     await circuit.expectPass(
       { in: SAMPLE_X_509 },
-      { out: [SAMPLE_X_509_EXPECTED_OID.length, SAMPLE_X509_EXPECTED_STRING.length] }
+      { out: [SAMPLE_X_509_EXPECTED_OID.length, SAMPLE_X509_EXPECTED_STRING.length, SAMPLE_X509_EXPECTED_UTC.length] }
     );
   });
 });
 
 describe("Circom Parser Range Circuit", () => {
-  let circuit: WitnessTester<["in", "actualLength", "actualLengthOfOid", "actualLengthOfString"], ["out"]>;
+  let circuit: WitnessTester<
+    [
+      "in",
+      "actualLength",
+      "actualLengthOfOid",
+      "actualLengthOfString",
+      "actualLengthOfUTC",
+      "actualLengthOfOctetString",
+      "actualLengthOfBitString"
+    ],
+    ["out"]
+  >;
   const N = MAX_INPUT_LENGTH;
-  const lengthOfOID = 44;
-  const lengthOfString = 4;
-
+  const lengthOfOID = SAMPLE_DER_EXPECTED_OID.length;
+  const lengthOfString = SAMPLE_DER_EXPECTED_STRING.length;
+  const lengthOfUtc = SAMPLE_DER_EXPECTED_UTC.length;
+  const lengthOfBit = 3;
+  const lengthOfOctet = 8;
   const input = SAMPLE_DER;
   const inputWithPaddingZero = input.concat(Array(N - input.length).fill(0));
 
   before(async () => {
     circuit = await circomkit.WitnessTester(
-      `AsnStartAndEndIndex_${N}_${MAX_OID_OUTPUT_LENGTH}_${MAX_UTF8_OUTPUT_LENGTH}`,
+      `AsnStartAndEndIndex_${N}_${MAX_OID_OUTPUT_LENGTH}_${MAX_UTF8_OUTPUT_LENGTH}_${MAX_UTC_TIME_LENGTH}`,
       {
         file: "parser",
         template: "AsnStartAndEndIndex",
-        params: [N, MAX_OID_OUTPUT_LENGTH, MAX_UTF8_OUTPUT_LENGTH],
+        params: [
+          N,
+          MAX_OID_OUTPUT_LENGTH,
+          MAX_UTF8_OUTPUT_LENGTH,
+          MAX_UTC_TIME_LENGTH,
+          MAX_OCTET_STRING_LENGTH,
+          MAX_BIT_STRING_LENGTH,
+        ],
       }
     );
+    console.log("#contraints", await circuit.getConstraintCount());
   });
   it("It Should take input", async () => {
     await circuit.calculateWitness({
@@ -217,35 +245,63 @@ describe("Circom Parser Range Circuit", () => {
       actualLength: SAMPLE_DER.length,
       actualLengthOfOid: lengthOfOID,
       actualLengthOfString: lengthOfString,
+      actualLengthOfUTC: lengthOfUtc,
+      actualLengthOfOctetString: lengthOfOctet,
+      actualLengthOfBitString: lengthOfBit,
     });
   });
 });
 
 describe("Circom Parser Range Circuit", () => {
-  let circuit: WitnessTester<["in", "actualLength", "actualLengthOfOid", "actualLengthOfString"], ["out"]>;
+  let circuit: WitnessTester<
+    [
+      "in",
+      "actualLength",
+      "actualLengthOfOid",
+      "actualLengthOfString",
+      "actualLengthOfUTC",
+      "actualLengthOfOctetString",
+      "actualLengthOfBitString"
+    ],
+    ["out"]
+  >;
+
   const N = MAX_INPUT_LENGTH;
   const lengthOfOID = SAMPLE_BER_EXPECTED_0ID.length;
   const lengthOfString = SAMPLE_BER_EXPECTED_STRING.length;
-
+  const lengthOfUTC = SAMPLE_BER_EXPECTED_UTC.length;
   const input = SAMPLE_BER;
   const inputWithPaddingZero = input.concat(Array(N - input.length).fill(0));
 
+  const actualBitStringLen = 3;
+  const actualOctetStringLen = 18;
   before(async () => {
     circuit = await circomkit.WitnessTester(
-      `AsnStartAndEndIndex_${N}_${MAX_OID_OUTPUT_LENGTH}_${MAX_UTF8_OUTPUT_LENGTH}`,
+      `AsnStartAndEndIndex_${N}_${MAX_OID_OUTPUT_LENGTH}_${MAX_UTF8_OUTPUT_LENGTH}_${MAX_UTC_TIME_LENGTH}`,
       {
         file: "parser",
         template: "AsnStartAndEndIndex",
-        params: [N, MAX_OID_OUTPUT_LENGTH, MAX_UTF8_OUTPUT_LENGTH],
+        params: [
+          N,
+          MAX_OID_OUTPUT_LENGTH,
+          MAX_UTF8_OUTPUT_LENGTH,
+          MAX_UTC_TIME_LENGTH,
+          MAX_OCTET_STRING_LENGTH,
+          MAX_BIT_STRING_LENGTH,
+        ],
       }
     );
   });
+
   it("It Should take input", async () => {
     await circuit.calculateWitness({
       in: inputWithPaddingZero,
       actualLength: SAMPLE_BER.length,
       actualLengthOfOid: lengthOfOID,
       actualLengthOfString: lengthOfString,
+      actualLengthOfUTC: lengthOfUTC,
+      actualLengthOfOctetString: actualOctetStringLen,
+      actualLengthOfBitString: actualBitStringLen,
     });
   });
 });

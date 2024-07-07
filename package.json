@@ -1,16 +1,29 @@
 {
-  "name": "asn1-parser-circom",
-  "description": "circom asn.1 der and ber parser",
+  "name": "@zk-email/asn1-parser-circom",
+  "version": "0.0.2",
+  "description": "circom asn.1 der and ber parser implementation in circom",
   "scripts": {
     "start": "npx ts-node ./src/index.ts",
     "test": "npx mocha",
     "clean": "npx circomkit clean",
-    "compile:utf8": "npx circomkit compile utf8prover && npx circomkit setup utf8prover"
+    "generate:utf8": "npx circomkit compile utf8prover && npx circomkit setup utf8prover",
+    "generate:asnRange": "npx circomkit compile asnRange && npx circomkit setup asnRange",
+    "build:utf8": "npx circomkit compile utf8prover",
+    "prove:utf8": "npx circomkit prove utf8prover default",
+    "setup:utf8": " npx circomkit setup utf8prover",
+    "verify:utf8": "npx circomkit verify utf8prover default",
+    "build:asnRange": "npx circomkit compile asnRange",
+    "setup:asnRange": "npx circomkit setup asnRange",
+    "prove:asnRange": "npx circomkit prove asnRange default",
+    "verify:asnRange": "npx circomkit verify asnRange default"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/0xVikasRushi/asn1-parser-circom"
+    "url": "git+https://github.com/zkemail/asn1-parser-circom"
   },
+  "contributors": [
+    "Vikas Rushi <0xvikas@gmail.com>"
+  ],
   "keywords": [
     "circom",
     "asn1",
@@ -30,5 +43,6 @@
     "mocha": "^10.2.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.1.3"
-  }
+  },
+  "packageManager": "yarn@v1.22.22"
 }

@@ -3,6 +3,9 @@ import { readAndParseDer } from "./cert";
 export const MAX_INPUT_LENGTH = 20000;
 export const MAX_OID_OUTPUT_LENGTH = 80;
 export const MAX_UTF8_OUTPUT_LENGTH = 80;
+export const MAX_UTC_TIME_LENGTH = 10;
+export const MAX_BIT_STRING_LENGTH = 100;
+export const MAX_OCTET_STRING_LENGTH = 100;
 
 export const MAX_ACTUAL_STATE_NAME_LEN = 30;
 export const MAX_ACTUAL_OID_LENGTH = 30;
@@ -15,6 +18,9 @@ export const ASN1_TAGS = {
   CONTEXT_SPECIFIC_3: 0xa3,
   CONTEXT_SPECIFIC_4: 0xa4,
   OCTET_STRING: 0x04,
+  OBJECT_IDENTIFIER: 0x06,
+  UTC_TIME: 0x17,
+  BIG_STRING: 0x03,
 };
 
 export const MAX_STATE_NAME_LEN = 30;
@@ -177,3 +183,7 @@ export const SAMPLE_X509_EXPECTED_STRING = [
 ];
 export const SAMPLE_BER_EXPECTED_STRING = ["Test", "Test", "Test", "Test"];
 export const SAMPLE_DER_EXPECTED_STRING = ["Test", "Test", "Test", "Test"];
+
+export const SAMPLE_DER_EXPECTED_UTC = ["2020-09-02 13:25:26", "2030-09-02 13:25:26", "2018-07-16 14:56:35"];
+export const SAMPLE_BER_EXPECTED_UTC = ["2018-07-16 15:17:00", "2019-07-16 15:17:00", "2018-07-16 15:17:01"];
+export const SAMPLE_X509_EXPECTED_UTC = ["2024-06-18 14:40:26", "2025-06-18 14:40:26", "2024-06-18 14:49:55"];
