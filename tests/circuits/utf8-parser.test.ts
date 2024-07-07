@@ -1,3 +1,4 @@
+import fs from "fs";
 import { WitnessTester } from "circomkit";
 import {
   MAX_ACTUAL_OID_LENGTH,
@@ -49,20 +50,23 @@ describe("UTF8-PARSER TEST", () => {
     ["out"]
   >;
   before(async () => {
+    const params = [
+      maxLength,
+      maxStateNameLen,
+      maxOidLen,
+      maxLengthOfOid,
+      maxLengthOfUtf8,
+      maxUTCLen,
+      maxLengthOfOctet,
+      maxLengthofBit,
+    ];
+
     circuit = await circomkit.WitnessTester("UTF8StringProver", {
       file: "utf8-parser",
       template: "UTF8StringProver",
-      params: [
-        maxLength,
-        maxStateNameLen,
-        maxOidLen,
-        maxLengthOfOid,
-        maxLengthOfUtf8,
-        maxUTCLen,
-        maxLengthOfOctet,
-        maxLengthofBit,
-      ],
+      params: params,
     });
+    console.log("#params", params);
     console.log("#contraints", await circuit.getConstraintCount());
   });
 
@@ -79,7 +83,7 @@ describe("UTF8-PARSER TEST", () => {
       const oid = [2, 5, 4, 10];
       const oidWithPaddingZeros = oid.concat(Array(maxOidLen - oid.length).fill(0));
 
-      await circuit.calculateWitness({
+      const wt = await circuit.calculateWitness({
         in: inputWithPaddingZeros,
         oid: oidWithPaddingZeros,
         stateName: stateWithPaddingZeros,
@@ -92,6 +96,7 @@ describe("UTF8-PARSER TEST", () => {
         lengthOfBit: 2,
         lengthOfOctet: 7,
       });
+      console.log(wt);
     });
 
     it("It Should take verify (2.5.4.8) => Telagana", async () => {
@@ -100,7 +105,7 @@ describe("UTF8-PARSER TEST", () => {
 
       const oid = [2, 5, 4, 8]; // 2.5.4.8
       const oidWithPaddingZeros = oid.concat(Array(maxOidLen - oid.length).fill(0));
-      await circuit.calculateWitness({
+      const s = {
         in: inputWithPaddingZeros,
         oid: oidWithPaddingZeros,
         stateName: stateWithPaddingZeros,
@@ -112,7 +117,9 @@ describe("UTF8-PARSER TEST", () => {
         lengthOfUtc: SAMPLE_X509_EXPECTED_UTC.length,
         lengthOfBit: 2,
         lengthOfOctet: 7,
-      });
+      };
+      fs.writeFileSync("test.json", JSON.stringify(s));
+      await circuit.expectPass(s);
     });
 
     it("It Should take inputs (2.5.4.3) => dummywebsite.com", async () => {
@@ -122,7 +129,7 @@ describe("UTF8-PARSER TEST", () => {
       const oid = [2, 5, 4, 3];
       const oidWithPaddingZeros = oid.concat(Array(maxOidLen - oid.length).fill(0));
 
-      await circuit.calculateWitness({
+      await circuit.expectPass({
         in: inputWithPaddingZeros,
         oid: oidWithPaddingZeros,
         stateName: stateWithPaddingZeros,
@@ -195,7 +202,7 @@ describe("UTF8-PARSER TEST", () => {
     const oidWithPaddingZeros = oid.concat(Array(maxOidLen - oid.length).fill(0));
 
     it("It Should take verify ( 2.5.4.3 ) => test", async () => {
-      await circuit.calculateWitness({
+      await circuit.expectPass({
         in: inputWithPaddingZeros,
         oid: oidWithPaddingZeros,
         stateName: stateWithPaddingZeros,
@@ -223,7 +230,7 @@ describe("UTF8-PARSER TEST", () => {
     const oidWithPaddingZeros = oid.concat(Array(maxOidLen - oid.length).fill(0));
 
     it("It Should take verify ( 2.5.4.3 ) => test", async () => {
-      await circuit.calculateWitness({
+      await circuit.expectPass({
         in: inputWithPaddingZeros,
         oid: oidWithPaddingZeros,
         stateName: stateWithPaddingZeros,

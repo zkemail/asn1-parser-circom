@@ -2,7 +2,12 @@
   "utf8prover": {
     "file": "utf8-parser",
     "template": "UTF8StringProver",
-    "params": [20000, 30, 30, 80, 80]
+    "params": [20000, 30, 30, 80, 80, 10, 100, 100]
+  },
+  "asnRange": {
+    "file": "parser",
+    "template": "AsnStartAndEndIndex",
+    "params": [20000, 80, 80, 10, 100, 100]
   },
   "tag": {
     "file": "tag",
