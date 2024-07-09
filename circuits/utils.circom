@@ -1,12 +1,32 @@
 pragma circom 2.0.0;
+include "circomlib/circuits/comparators.circom";
 
 template PrintArray(N) { 
     signal input in[N];
+    log("Printing Array");
     for (var i=0; i<N; i++){ 
         log(in[i]);
     }
+    log("Closing Array");
 }
 
+template InRange(n) {
+    signal input in;
+    signal input lowerBound;
+    signal input upperBound;
+    signal output out;
+
+    component geq = GreaterEqThan(n);
+    component lt = LessThan(n);
+
+    geq.in[0] <== in;
+    geq.in[1] <== lowerBound;
+
+    lt.in[0] <== in;
+    lt.in[1] <== upperBound;
+
+    out <== geq.out * lt.out;
+}
 
 // Selector template to choose between two inputs based on a condition
 template Selector() {

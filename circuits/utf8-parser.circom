@@ -1,6 +1,8 @@
 pragma circom 2.0.0;
 
 include "./parser.circom";
+include "./utils.circom";
+include "./utf8-utils.circom";
 include "circomlib/circuits/comparators.circom";
 
 
@@ -63,35 +65,54 @@ template UTF8StringProver (maxLength, maxStateNameLen, maxOidLen, maxLengthOfOid
     signal outRangeForOID[maxLengthOfOid][2] <== asnStartAndEndIndex.outRangeForOID;
     signal outRangeForUTF8[maxLengthOfUtf8][2] <== asnStartAndEndIndex.outRangeForUTF8;
 
+    // component temp2[maxOidLen];
+    component lenCheckEq[maxLengthOfOid];
+    component oidCheckEq[maxOidLen][maxLengthOfOid];
+
     var isFoundTest = 0;
 
-    for (var i = 0; i < lengthOfOid; i++) {
+    component CalcLengthOids[maxLengthOfOid];
+    component selectorOidLen[maxLengthOfOid][maxLengthOfOid];
+
+    component inRangeCheck[maxLengthOfOid][maxLengthOfOid];
+
+    for (var i = 0; i < maxLengthOfOid; i++) {
         var startIndex = outRangeForOID[i][0];
         var endIndex = outRangeForOID[i][1];
         
         var length = 0;
-        var isFirst = 1;
+        
+        CalcLengthOids[i] = OIDLengthCalculator(maxLengthOfOid,maxOidLen);
+        CalcLengthOids[i].oid <== oid;
+        CalcLengthOids[i].oidLen <== oidLen;
+        CalcLengthOids[i].startIndex <== startIndex;
+        CalcLengthOids[i].endIndex <== endIndex;
+        var startIndexTemp = startIndex;
 
-        // Find length of OID array [2.3.4] => 3 
-        for (var j = startIndex + 2; j < endIndex; j++) { 
-            var curr = in[j];
-            curr = curr & 0x80 == 0 ? 1 : 0;
-            if (curr == 1) { 
-                if (isFirst == 1) { 
-                    length += 2;
-                    isFirst = 0;
-                } else {
-                    length++;
-                }
-            }   
+        for (var j = 0; j < maxLengthOfOid; j++) {
+            inRangeCheck[i][j] = InRange(32);
+            inRangeCheck[i][j].in <-- startIndexTemp;
+            inRangeCheck[i][j].lowerBound <== startIndex;
+            inRangeCheck[i][j].upperBound <== endIndex;
+
+            selectorOidLen[i][j] = Selector(); 
+            selectorOidLen[i][j].condition <== inRangeCheck[i][j].out;
+            selectorOidLen[i][j].in[0] <== 0;
+            selectorOidLen[i][j].in[1] <-- in[startIndexTemp];
+            CalcLengthOids[i].in[j] <== selectorOidLen[i][j].out;
+
+            if (startIndexTemp < endIndex) { 
+                startIndexTemp++;
+            }
         }
 
-        // Decoding OID string from buffer (refer to ObjectIdentifierParser() template)
-        if (length == oidLen) {
+        length = CalcLengthOids[i].out;
+        
+        if (oidLen == length) {
             var oidCalc[maxOidLen];
             var outputIndex = 0;
             var n = 0;
-            isFirst = 1;
+            var isFirst = 1;
             
             // Skip class and value bytes
             // Calculate all OIDs with the same length as the actual OID
@@ -119,7 +140,7 @@ template UTF8StringProver (maxLength, maxStateNameLen, maxOidLen, maxLengthOfOid
 
             var no_of_matches = 0;
             
-            for (var l = 0; l < oidLen; l++) {                        
+            for (var l = 0; l < oidLen; l++) {
                 if (oidCalc[l] == oid[l]) {
                     no_of_matches++;
                 }
@@ -145,6 +166,7 @@ template UTF8StringProver (maxLength, maxStateNameLen, maxOidLen, maxLengthOfOid
             }
         }                
     }
+
     signal isFound <-- isFoundTest - 1;
     component isZero = IsZero();
     isZero.in <== isFound;
