@@ -16,7 +16,8 @@ This circuits can extract and verify key information from ASN.1 encoded data str
    - ![image](https://github.com/zkemail/asn1-parser-circom/assets/88543171/128430bd-d3da-43d2-8b8e-755c587ef07d)
       
 2. **UTF8StringProver**: Extracts and parses UTF8 string values from the ASN.1 structure.
-   - ![image](https://github.com/zkemail/asn1-parser-circom/assets/88543171/cd5485c5-63f6-4c42-9ceb-99cc4596832d)
+   - ![image](https://github.com/zkemail/asn1-parser-circom/assets/88543171/b4b3954b-3653-498a-813b-4003fc9f9f8c)
+
 
 5. **AsnParser** **(WIP)**: generic parser which extracts Integers,Signatures,UT8String and Date (WIP).
 
