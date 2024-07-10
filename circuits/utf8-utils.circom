@@ -2,6 +2,7 @@ pragma circom 2.0.0;
 
 include "./utils.circom";
 include "circomlib/circuits/comparators.circom";
+include "circomlib/circuits/gates.circom";
 
 template OIDLengthCalculator(maxLength, maxOidLen) {
     signal input in[maxLength];
@@ -18,6 +19,7 @@ template OIDLengthCalculator(maxLength, maxOidLen) {
     var length = 0;
     var n = 0;
                 
+    // ? oid parsing
     for (var k = 2; k < endIndex - startIndex; k++) {
       var currBytes = in[k];
       n = n << 7;
@@ -39,12 +41,25 @@ template OIDLengthCalculator(maxLength, maxOidLen) {
                     n = 0;
         }
       }
-      out <-- length;
-    //   component eqs[maxOidLen];
+
+      // ? adding zero to oidCalc
+      for (var i = length; i < maxOidLen; i++) { oidCalc[i] = 0; }
       
-    //   for (var i = 0; i < maxOidLen; i++) {
-    //     eqs[i] = IsEqual();
-    //     eqs[i].in[0] <== oid[i];
-    //     eqs[i].in[1] <-- oidCalc[i];
-    //   }          
+      signal allEqual[maxOidLen];
+      component equalChecks[maxOidLen];
+
+      for (var i = 0;i  < maxOidLen; i++) {
+        equalChecks[i] = IsEqual();
+        equalChecks[i].in[0] <== oid[i];
+        equalChecks[i].in[1] <-- oidCalc[i];
+        allEqual[i] <== equalChecks[i].out;
+      }
+
+    
+      // ? output will be something like this
+      // 1. Output will be 1. only when length == oidLen && oidCalc[i] == oid[i]
+      // 2. Output will be zero in the rest of the cases
+    component finalAND = MultiAND(maxOidLen);
+    finalAND.in <== allEqual;
+    out <== finalAND.out;
 }

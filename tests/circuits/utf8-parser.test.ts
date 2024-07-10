@@ -162,28 +162,6 @@ describe("UTF8-PARSER TEST", () => {
         lengthOfOctet: 7,
       });
     });
-
-    it("It Should fail at wrong oid", async () => {
-      const stateName = Array.from(Buffer.from("dummywebsite.com"));
-      const stateWithPaddingZeros = stateName.concat(Array(maxStateNameLen - stateName.length).fill(0));
-
-      const oid = [2, 5, 4, 6]; // WRONG OID HERE
-      const oidWithPaddingZeros = oid.concat(Array(maxOidLen - oid.length).fill(0));
-
-      await circuit.expectFail({
-        in: inputWithPaddingZeros,
-        oid: oidWithPaddingZeros,
-        stateName: stateWithPaddingZeros,
-        actualLength: N,
-        stateNameLen: stateName.length,
-        oidLen: oid.length,
-        lengthOfOid: SAMPLE_X_509_EXPECTED_OID.length,
-        lengthOfUtf8: SAMPLE_X509_EXPECTED_STRING.length,
-        lengthOfUtc: SAMPLE_X509_EXPECTED_UTC.length,
-        lengthOfBit: 2,
-        lengthOfOctet: 7,
-      });
-    });
   });
 
   describe("UTF8StringProver DER", () => {

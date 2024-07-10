@@ -1,13 +1,34 @@
 pragma circom 2.0.0;
 include "circomlib/circuits/comparators.circom";
+include "circomlib/circuits/gates.circom";
 
 template PrintArray(N) { 
     signal input in[N];
-    log("Printing Array");
     for (var i=0; i<N; i++){ 
         log(in[i]);
     }
-    log("Closing Array");
+}
+
+template MultiOr(n) {
+    signal input in[n];
+    signal output out;
+
+    component orGates[n-1];
+
+    // Initialize the first OR gate
+    orGates[0] = OR();
+    orGates[0].a <== in[0];
+    orGates[0].b <== in[1];
+
+    // Chain the OR gates
+    for (var i = 1; i < n-1; i++) {
+        orGates[i] = OR();
+        orGates[i].a <== orGates[i-1].out;
+        orGates[i].b <== in[i+1];
+    }
+
+    // The output of the last OR gate is the result
+    out <== orGates[n-2].out;
 }
 
 template InRange(n) {

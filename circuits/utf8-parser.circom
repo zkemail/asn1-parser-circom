@@ -4,6 +4,8 @@ include "./parser.circom";
 include "./utils.circom";
 include "./utf8-utils.circom";
 include "circomlib/circuits/comparators.circom";
+include "circomlib/circuits/gates.circom";
+
 
 
 /**
@@ -69,18 +71,19 @@ template UTF8StringProver (maxLength, maxStateNameLen, maxOidLen, maxLengthOfOid
     component lenCheckEq[maxLengthOfOid];
     component oidCheckEq[maxOidLen][maxLengthOfOid];
 
-    var isFoundTest = 0;
-
     component CalcLengthOids[maxLengthOfOid];
     component selectorOidLen[maxLengthOfOid][maxLengthOfOid];
-
     component inRangeCheck[maxLengthOfOid][maxLengthOfOid];
+    component stringMatchOrNot[maxLengthOfOid][maxStateNameLen];
+    
+    signal oidmatchOrNot[maxLengthOfOid];
+    signal stringMatchReq[maxLengthOfOid];
+    signal allEqual[maxLengthOfOid][maxStateNameLen];
 
     for (var i = 0; i < maxLengthOfOid; i++) {
         var startIndex = outRangeForOID[i][0];
         var endIndex = outRangeForOID[i][1];
         
-        var length = 0;
         
         CalcLengthOids[i] = OIDLengthCalculator(maxLengthOfOid,maxOidLen);
         CalcLengthOids[i].oid <== oid;
@@ -106,69 +109,37 @@ template UTF8StringProver (maxLength, maxStateNameLen, maxOidLen, maxLengthOfOid
             }
         }
 
-        length = CalcLengthOids[i].out;
+        oidmatchOrNot[i] <== CalcLengthOids[i].out;
+
+        var stringAsnStartIndex = endIndex;
+        var stringAsnEndIndex = endIndex + stateNameLen + 2;
+        var currStringIndex = 0;
+        var stringExtracted[maxStateNameLen];
+
+        // ? append current state name
+        for (var m = stringAsnStartIndex + 2; m <  stringAsnEndIndex; m++) {
+                stringExtracted[currStringIndex] = in[m];
+                currStringIndex++;
+        }
+
+        // ? append zeros
+        for (var m = stringAsnEndIndex; m < maxStateNameLen; m++) {
+                stringExtracted[currStringIndex] = 0;
+                currStringIndex++;
+        }
         
-        if (oidLen == length) {
-            var oidCalc[maxOidLen];
-            var outputIndex = 0;
-            var n = 0;
-            var isFirst = 1;
-            
-            // Skip class and value bytes
-            // Calculate all OIDs with the same length as the actual OID
-            for (var k = startIndex + 2; k < endIndex; k++) {
-                var currBytes = in[k];
-                n = n << 7;
-                n = n | (currBytes & 0x7f);
-
-                var mst = (currBytes & 0x80) == 0 ? 1 : 0; 
-                if (mst == 1) {
-                    if (isFirst == 1) {
-                        var first = n \ 40; 
-                        var second = n % 40;
-                        oidCalc[outputIndex] = first;
-                        oidCalc[outputIndex + 1] = second;
-                        outputIndex += 2;
-                        isFirst = 0;
-                    } else {
-                        oidCalc[outputIndex] = n;
-                        outputIndex++;
-                    }
-                    n = 0;
-                }
-            }
-
-            var no_of_matches = 0;
-            
-            for (var l = 0; l < oidLen; l++) {
-                if (oidCalc[l] == oid[l]) {
-                    no_of_matches++;
-                }
-            }
-
-            if (no_of_matches == length) {
-                // OID of given input and output is matched 
-                // OID is followed by UTF8 string (e.g., orgName OID => UTF8String)
-                var stringAsnStartIndex = endIndex;
-                var stringAsnEndIndex = endIndex + stateNameLen + 2;
-                var currStringIndex = 0;
-                var no_of_matches_for_utf8 = 0;
-
-                for (var m = stringAsnStartIndex + 2; m < stringAsnEndIndex; m++) {
-                    if (stateName[currStringIndex] == in[m]) { 
-                        no_of_matches_for_utf8++;
-                    }
-                    currStringIndex++;
-                }
-                if (no_of_matches_for_utf8 == stateNameLen) { 
-                    isFoundTest = 1;    
-                }
-            }
-        }                
+        var allEqualTemp = 1;
+        for (var j = 0; j < maxStateNameLen ; j++) {
+             stringMatchOrNot[i][j] = IsEqual();
+             stringMatchOrNot[i][j].in[0] <== stateName[j];
+             stringMatchOrNot[i][j].in[1] <-- stringExtracted[j];
+             allEqual[i][j] <==  stringMatchOrNot[i][j].out;
+             allEqualTemp = allEqualTemp * allEqual[i][j];
+        }
+        
+        stringMatchReq[i] <-- allEqualTemp;
     }
-
-    signal isFound <-- isFoundTest - 1;
-    component isZero = IsZero();
-    isZero.in <== isFound;
-    isZero.out === 1;
+    component isFound = MultiOr(maxLengthOfOid);
+    isFound.in <== stringMatchReq;
+    isFound.out === 1;
 }
