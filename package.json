@@ -1,6 +1,6 @@
 {
   "name": "@zk-email/asn1-parser-circom",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "circom asn.1 der and ber parser implementation in circom",
   "scripts": {
     "start": "npx ts-node ./src/index.ts",
