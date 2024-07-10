@@ -3,4 +3,4 @@ pragma circom 2.1.6;
 
 include "../utf8-parser.circom";
 
-component main = UTF8StringProver(20000, 30, 30, 80, 80, 10, 100, 100);
+component main = UTF8StringProver(20000, 30, 30, 50, 45, 10, 100, 100);
