@@ -21,6 +21,9 @@ export type CircuitInput = {
   oidLen: number;
   lengthOfOid: number;
   lengthOfUtf8: number;
+  lengthOfUtc: number;
+  lengthOfBit: number;
+  lengthOfOctet: number;
 };
 
 export const SPECIFIC_OIDS = ["2.5.4.6", "2.5.4.8", "2.5.4.7", "2.5.4.10", "2.5.4.11", "2.5.4.3"];

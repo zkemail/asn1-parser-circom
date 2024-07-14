@@ -19,6 +19,7 @@ enum Status {
   proofGenerated = "Proof Generated",
   proofVerified = "Proof Verified",
   proofNotVerified = "Proof Not Verified",
+  fetchingZkey = "Fetching Verification Key",
 }
 
 export default function OidItem({ oid, info, inputBytes, expectedLength }: OidItemProps) {
@@ -33,6 +34,7 @@ export default function OidItem({ oid, info, inputBytes, expectedLength }: OidIt
         toast.error("Proof generation failed", { position: "top-right", autoClose: 3000 });
         return;
       }
+
       const acutalLength = inputBytes.length;
       const inputWithPaddingZeros = inputBytes.concat(Array(MAX_INPUT_LENGTH - inputBytes.length).fill(0));
 
@@ -41,8 +43,11 @@ export default function OidItem({ oid, info, inputBytes, expectedLength }: OidIt
 
       const ALL_OIDS_LENGTH = expectedLength[0];
       const ALL_UTF8_LENGTH = expectedLength[1];
+      const ALL_UTC_LENGTH = expectedLength[2];
+      const ALL_BIT_LENGTH = expectedLength[3];
+      const ALL_OCTET_LENGTH = expectedLength[4];
 
-      console.log(ALL_OIDS_LENGTH, ALL_UTF8_LENGTH);
+      console.log(expectedLength);
       const utf8Param = Array.from(Buffer.from(utf8));
       const stateWithPaddingZeros = utf8Param.concat(Array(MAX_ACTUAL_STATE_NAME_LEN - utf8Param.length).fill(0));
 
@@ -55,9 +60,25 @@ export default function OidItem({ oid, info, inputBytes, expectedLength }: OidIt
         lengthOfUtf8: ALL_UTF8_LENGTH,
         oidLen: oidArray.length,
         stateNameLen: utf8Param.length,
+        lengthOfBit: ALL_BIT_LENGTH,
+        lengthOfOctet: ALL_OCTET_LENGTH,
+        lengthOfUtc: ALL_UTC_LENGTH,
       };
-      const { proof, publicSignals } = await Utf8CircuitProver.generate(inputs);
+
+      const proofgen: Promise<{ proof: any; publicSignals: any }> = new Promise((resolve) =>
+        resolve(Utf8CircuitProver.generate(inputs))
+      );
+      toast.promise(proofgen, {
+        pending: "Fetching Verification Key",
+        success: "Generated Proof Successfully  🎉",
+        error: "Error in Fetching Verification Key 🤯",
+      });
+
+      const proof = (await proofgen).proof;
+      const publicSignals = (await proofgen).publicSignals;
+
       console.log(proof, publicSignals);
+
       setProof(JSON.stringify(proof, null, 2));
       setPublicSig(JSON.stringify(publicSignals));
       setStatus(Status.proofGenerated);
@@ -88,6 +109,8 @@ export default function OidItem({ oid, info, inputBytes, expectedLength }: OidIt
   return (
     <div className="p-4 space-y-4">
       <ToastContainer />
+
+      {fetchZkey && <></>}
       <div className="flex items-center justify-between">
         <h3 className="text-gray-900 text-sm font-medium truncate">{oid}</h3>
         <span

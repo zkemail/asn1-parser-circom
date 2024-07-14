@@ -30,10 +30,9 @@ export default function InputBox({ certificateContent, onCertificateContentChang
 
   const fetchCertificateContent = (type: string) => {
     const fileUrl = {
-      DER: "https://raw.githubusercontent.com/asn1-parser-circom/samples/der/sig-p256-ber.txt",
-      BER: "https://raw.githubusercontent.com/0xVikasRushi/asn1-parser-circom/main/samples/der/sig-p256-der.txt",
-      "X.509":
-        "https://gist.githubusercontent.com/0xVikasRushi/9ca33093d2715926cc31accb2e74d04c/raw/897a36b9c1aa2fa52047c153821e6ff945f8799f/X.509.txt",
+      DER: "https://raw.githubusercontent.com/zkemail/asn1-parser-circom/main/samples/sig-p256-der.txt",
+      BER: "https://raw.githubusercontent.com/zkemail/asn1-parser-circom/main/samples/sig-p256-ber.txt",
+      "X.509": "https://raw.githubusercontent.com/zkemail/asn1-parser-circom/main/samples/X.509.txt",
     }[type];
 
     fetch(`${fileUrl}`)

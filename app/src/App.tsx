@@ -31,6 +31,7 @@ function App() {
     const INPUT_BYTES = Certificate.base64ToBinary(parsedCert!);
     setInputBytes(Array.from(INPUT_BYTES));
     const parsed = ASN.decode(ASN.parse(Array.from(INPUT_BYTES)));
+
     const Oids = parsed.OID;
     const OidSet = new Set(Oids);
     const OIDsInfo: { [key: string]: OIDInfo } = {};
@@ -40,7 +41,13 @@ function App() {
       }
     });
 
-    setExpectedLength([Oids.length, parsed.UTF8Array.length]);
+    setExpectedLength([
+      parsed.OID.length,
+      parsed.UTF8Array.length,
+      parsed.UTCString.length,
+      parsed.BitArray.length,
+      parsed.OctetArray.length,
+    ]);
     setOidsInfo(OIDsInfo);
   };
 
