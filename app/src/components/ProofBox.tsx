@@ -110,7 +110,6 @@ export default function OidItem({ oid, info, inputBytes, expectedLength }: OidIt
     <div className="p-4 space-y-4">
       <ToastContainer />
 
-      {fetchZkey && <></>}
       <div className="flex items-center justify-between">
         <h3 className="text-gray-900 text-sm font-medium truncate">{oid}</h3>
         <span
