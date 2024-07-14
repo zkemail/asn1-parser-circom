@@ -81,7 +81,7 @@ describe("UTF8-PARSER TEST", () => {
 
       const oid = [2, 5, 4, 10];
       const oidWithPaddingZeros = oid.concat(Array(maxOidLen - oid.length).fill(0));
-      const s = {
+      const input = {
         in: inputWithPaddingZeros,
         oid: oidWithPaddingZeros,
         stateName: stateWithPaddingZeros,
@@ -94,7 +94,9 @@ describe("UTF8-PARSER TEST", () => {
         lengthOfBit: 2,
         lengthOfOctet: 7,
       };
-      await circuit.expectPass(s);
+      // const proof = await Utf8CircuitProver.generate(input);
+      // console.log(proof);
+      await circuit.expectPass(input);
     });
 
     it("It Should take verify (2.5.4.8) => Telagana", async () => {
@@ -103,7 +105,7 @@ describe("UTF8-PARSER TEST", () => {
 
       const oid = [2, 5, 4, 8]; // 2.5.4.8
       const oidWithPaddingZeros = oid.concat(Array(maxOidLen - oid.length).fill(0));
-      const s = {
+      const input = {
         in: inputWithPaddingZeros,
         oid: oidWithPaddingZeros,
         stateName: stateWithPaddingZeros,
@@ -116,7 +118,9 @@ describe("UTF8-PARSER TEST", () => {
         lengthOfBit: 2,
         lengthOfOctet: 7,
       };
-      await circuit.expectPass(s);
+      // const proof = await Utf8CircuitProver.generate(input);
+      // console.log(proof);
+      await circuit.expectPass(input);
     });
 
     it("It Should take inputs (2.5.4.3) => dummywebsite.com", async () => {
@@ -125,8 +129,7 @@ describe("UTF8-PARSER TEST", () => {
 
       const oid = [2, 5, 4, 3];
       const oidWithPaddingZeros = oid.concat(Array(maxOidLen - oid.length).fill(0));
-
-      await circuit.expectPass({
+      const input = {
         in: inputWithPaddingZeros,
         oid: oidWithPaddingZeros,
         stateName: stateWithPaddingZeros,
@@ -138,7 +141,8 @@ describe("UTF8-PARSER TEST", () => {
         lengthOfUtc: SAMPLE_X509_EXPECTED_UTC.length,
         lengthOfBit: 2,
         lengthOfOctet: 7,
-      });
+      };
+      await circuit.expectPass(input);
     });
 
     it("It Should fail at wrong utf8", async () => {
@@ -147,8 +151,7 @@ describe("UTF8-PARSER TEST", () => {
 
       const oid = [2, 5, 4, 3];
       const oidWithPaddingZeros = oid.concat(Array(maxOidLen - oid.length).fill(0));
-
-      await circuit.expectFail({
+      const input = {
         in: inputWithPaddingZeros,
         oid: oidWithPaddingZeros,
         stateName: stateWithPaddingZeros,
@@ -160,7 +163,10 @@ describe("UTF8-PARSER TEST", () => {
         lengthOfUtc: SAMPLE_X509_EXPECTED_UTC.length,
         lengthOfBit: 2,
         lengthOfOctet: 7,
-      });
+      };
+      // const proof = await Utf8CircuitProver.generate(input);
+      // console.log(proof);
+      await circuit.expectFail(input);
     });
   });
 

@@ -1,6 +1,9 @@
 export const MAX_INPUT_LENGTH = 20000;
-export const MAX_OID_OUTPUT_LENGTH = 80;
-export const MAX_UTF8_OUTPUT_LENGTH = 80;
+export const MAX_OID_OUTPUT_LENGTH = 50;
+export const MAX_UTF8_OUTPUT_LENGTH = 45;
+export const MAX_UTC_TIME_LENGTH = 10;
+export const MAX_BIT_STRING_LENGTH = 100;
+export const MAX_OCTET_STRING_LENGTH = 100;
 
 export const MAX_ACTUAL_STATE_NAME_LEN = 30;
 export const MAX_ACTUAL_OID_LENGTH = 30;
@@ -13,6 +16,9 @@ export const ASN1_TAGS = {
   CONTEXT_SPECIFIC_3: 0xa3,
   CONTEXT_SPECIFIC_4: 0xa4,
   OCTET_STRING: 0x04,
+  OBJECT_IDENTIFIER: 0x06,
+  UTC_TIME: 0x17,
+  BIG_STRING: 0x03,
 };
 
 export const MAX_STATE_NAME_LEN = 30;

@@ -222,21 +222,24 @@ describe("Circom Parser Range Circuit", () => {
   const inputWithPaddingZero = input.concat(Array(N - input.length).fill(0));
 
   before(async () => {
+    const params = [
+      N,
+      MAX_OID_OUTPUT_LENGTH,
+      MAX_UTF8_OUTPUT_LENGTH,
+      MAX_UTC_TIME_LENGTH,
+      MAX_OCTET_STRING_LENGTH,
+      MAX_BIT_STRING_LENGTH,
+    ];
     circuit = await circomkit.WitnessTester(
       `AsnStartAndEndIndex_${N}_${MAX_OID_OUTPUT_LENGTH}_${MAX_UTF8_OUTPUT_LENGTH}_${MAX_UTC_TIME_LENGTH}`,
       {
         file: "parser",
         template: "AsnStartAndEndIndex",
-        params: [
-          N,
-          MAX_OID_OUTPUT_LENGTH,
-          MAX_UTF8_OUTPUT_LENGTH,
-          MAX_UTC_TIME_LENGTH,
-          MAX_OCTET_STRING_LENGTH,
-          MAX_BIT_STRING_LENGTH,
-        ],
+        params: params,
       }
     );
+    console.log("#params", params);
+
     console.log("#contraints", await circuit.getConstraintCount());
   });
   it("It Should take input", async () => {

@@ -3,4 +3,4 @@ pragma circom 2.1.6;
 
 include "../parser.circom";
 
-component main = AsnStartAndEndIndex(20000, 80, 80, 10, 100, 100);
+component main = AsnStartAndEndIndex(20000, 45, 35, 10, 80, 80);
