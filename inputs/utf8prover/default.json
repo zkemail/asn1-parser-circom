@@ -535,7 +535,7 @@
   "stateNameLen": 17,
   "oidLen": 4,
   "lengthOfOid": 43,
-  "lengthOfUtf8": 15,
+  "lengthOfUtf8": 18,
   "lengthOfUtc": 3,
   "lengthOfBit": 2,
   "lengthOfOctet": 7

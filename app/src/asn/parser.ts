@@ -89,7 +89,7 @@ export class ASN {
       if (e[0] === ASN1_TAGS.OBJECT_IDENTIFIER) {
         oidArray.push(this.parseOid(e));
       }
-      if (e[0] == 0x0c) {
+      if (e[0] == 0x0c || e[0] == ASN1_TAGS.PRINTABLE_STRING) {
         utf8Array.push(this.parseUTFString(e));
       }
       if (e[0] == ASN1_TAGS.UTC_TIME) {

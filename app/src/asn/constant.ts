@@ -19,6 +19,7 @@ export const ASN1_TAGS = {
   OBJECT_IDENTIFIER: 0x06,
   UTC_TIME: 0x17,
   BIG_STRING: 0x03,
+  PRINTABLE_STRING: 0x13,
 };
 
 export const MAX_STATE_NAME_LEN = 30;
@@ -167,16 +168,19 @@ export const SAMPLE_BER_EXPECTED_0ID = [
 ];
 
 export const SAMPLE_X509_EXPECTED_STRING = [
+  "IN", //? PRINTABLE STRING
   "Telagana",
   "Hyderabad",
   "OrganizationDummy",
   "Unit",
   "dummywebsite.com",
+  "IN",
   "Telagana",
   "Hyderabad",
   "OrganizationDummy",
   "Unit",
   "dummywebsite.com",
+  "IN",
   "Telagana",
   "Hyderabad",
   "OrganizationDummy",
