@@ -127,3 +127,7 @@ function tag_class_bit_string()  {
 function tag_class_utc_time()  {
     return 0x17;
 }
+
+function tag_class_printable_string()  {
+    return 0x13;
+}

@@ -94,6 +94,7 @@ describe("UTF8-PARSER TEST", () => {
         lengthOfBit: 2,
         lengthOfOctet: 7,
       };
+
       // const proof = await Utf8CircuitProver.generate(input);
       // console.log(proof);
       await circuit.expectPass(input);
@@ -167,6 +168,28 @@ describe("UTF8-PARSER TEST", () => {
       // const proof = await Utf8CircuitProver.generate(input);
       // console.log(proof);
       await circuit.expectFail(input);
+    });
+
+    it("It Should verify printable string", async () => {
+      const stateName = Array.from(Buffer.from("IN"));
+      const stateWithPaddingZeros = stateName.concat(Array(maxStateNameLen - stateName.length).fill(0));
+
+      const oid = [2, 5, 4, 6];
+      const oidWithPaddingZeros = oid.concat(Array(maxOidLen - oid.length).fill(0));
+      const input = {
+        in: inputWithPaddingZeros,
+        oid: oidWithPaddingZeros,
+        stateName: stateWithPaddingZeros,
+        actualLength: N,
+        stateNameLen: stateName.length,
+        oidLen: oid.length,
+        lengthOfOid: SAMPLE_X_509_EXPECTED_OID.length,
+        lengthOfUtf8: SAMPLE_X509_EXPECTED_STRING.length,
+        lengthOfUtc: SAMPLE_X509_EXPECTED_UTC.length,
+        lengthOfBit: 2,
+        lengthOfOctet: 7,
+      };
+      await circuit.expectPass(input);
     });
   });
 

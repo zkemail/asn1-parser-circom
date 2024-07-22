@@ -90,6 +90,7 @@ template AsnStartAndEndIndex(maxLength, maxlengthOfOid, maxlengthOfString, maxle
     var UTF8_STRING        =  tag_utf8_string();
     var UTC_TIME           =  tag_class_utc_time();
     var BIT_STRING         =  tag_class_bit_string();
+    var PRINTABLE_STRING   =  tag_class_printable_string();
 
     var i = 0;
 
@@ -189,7 +190,7 @@ template AsnStartAndEndIndex(maxLength, maxlengthOfOid, maxlengthOfString, maxle
                     endIndicesOids[num_of_oids] = endIndex;
                     num_of_oids++;
                 }
-                else if (ASN_TAG ==  UTF8_STRING) {
+                else if (ASN_TAG ==  UTF8_STRING || ASN_TAG == PRINTABLE_STRING) {
                     startIndicesUTF8[num_of_utf8] =  startIndex;
                     endIndicesUTF8[num_of_utf8]   = endIndex;
                     num_of_utf8++;
@@ -234,13 +235,14 @@ template AsnStartAndEndIndex(maxLength, maxlengthOfOid, maxlengthOfString, maxle
         outRangeForOID[k][0] <-- startIndicesOids[k];
         outRangeForOID[k][1] <-- endIndicesOids[k];
     }
-
+    
     component selectorForUtf1[maxlengthOfString];
     component selectorForUtf2[maxlengthOfString];
     component selectorsEqualForUtf[maxlengthOfString];
+    component isUtf8OrPrintable[maxlengthOfString];
+    component isPrintableEqual[maxlengthOfString];
 
-    for(var l = 0; l < maxlengthOfString ;l++) {
-        
+    for(var l = 0; l < maxlengthOfString; l++) {
         var start_tag_class = in[startIndicesUTF8[l]];
         var condition = l < actualLengthOfString ? 0 : 1;
 
@@ -251,13 +253,23 @@ template AsnStartAndEndIndex(maxLength, maxlengthOfOid, maxlengthOfString, maxle
 
         selectorForUtf2[l] = Selector();
         selectorForUtf2[l].condition <-- condition;
-        selectorForUtf2[l].in[0] <==  tag_utf8_string();
+        selectorForUtf2[l].in[0] <== tag_utf8_string();
         selectorForUtf2[l].in[1] <== 0x00;
         
         selectorsEqualForUtf[l] = IsEqual();
         selectorsEqualForUtf[l].in[0] <== selectorForUtf1[l].out;
         selectorsEqualForUtf[l].in[1] <== selectorForUtf2[l].out;
-        selectorsEqualForUtf[l].out === 1;
+
+        // Add a check for PRINTABLE_STRING
+        isPrintableEqual[l] = IsEqual();
+        isPrintableEqual[l].in[0] <== selectorForUtf1[l].out;
+        isPrintableEqual[l].in[1] <== tag_class_printable_string();
+
+        // Check if it's either UTF8_STRING or PRINTABLE_STRING
+        isUtf8OrPrintable[l] = OR();
+        isUtf8OrPrintable[l].a <== selectorsEqualForUtf[l].out;
+        isUtf8OrPrintable[l].b <== isPrintableEqual[l].out;
+        isUtf8OrPrintable[l].out === 1;
 
         outRangeForUTF8[l][0] <-- startIndicesUTF8[l];
         outRangeForUTF8[l][1] <-- endIndicesUTF8[l];
@@ -350,6 +362,7 @@ template AsnStartAndEndIndex(maxLength, maxlengthOfOid, maxlengthOfString, maxle
     signal num_of_bit_string_signal <-- num_of_bit_string;
 
 
+
     component eqOids = IsEqual();
     component eqUtf8 = IsEqual();
     component eqUtcTime = IsEqual();
@@ -370,6 +383,7 @@ template AsnStartAndEndIndex(maxLength, maxlengthOfOid, maxlengthOfString, maxle
 
     eqBitString.in[0] <== num_of_bit_string_signal;
     eqBitString.in[1] <== actualLengthOfBitString;
+
 
     eqOids.out === 1;
     eqUtf8.out === 1;
@@ -396,6 +410,7 @@ template AsnLength(N) {
     var OBJECT_IDENTIFIER  =  tag_class_object_identifier();
     var UTF8_STRING        =  tag_utf8_string();
     var UTC_TIME           =  tag_class_utc_time();
+    var PRINTABLE_STRING   =  tag_class_printable_string();
 
     var num_of_oids = 0;
     var num_of_utf8 = 0;
@@ -450,7 +465,7 @@ template AsnLength(N) {
             // utf8Contraint.in <-- ASN_TAG;
             num_of_oids++;
           }
-          if (ASN_TAG ==  UTF8_STRING){
+          if (ASN_TAG == UTF8_STRING || ASN_TAG == PRINTABLE_STRING){
             num_of_utf8++;
           }
           if (ASN_TAG == UTC_TIME){
